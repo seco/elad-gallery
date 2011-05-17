@@ -1,0 +1,30 @@
+elad-gallery is an image gallery, that was designed with the following principles in mind:
+* Keep it simple.
+* High performance using browser and server level cache, make it as fast as possible. 
+* Easy to use UI
+* Use as much HTML5 and CSS3 as possible
+* Have a basic support for older browsers
+
+Known bugs:
+* the extract-strings.sh script is a bit broken.
+* Code duplication
+* No documentation
+
+Whislist (see also TODO in a separate file):
+* Image uploader
+* User defined metadata
+* Allow password protection to some folders
+
+Installation instructions:
+* Put the files somewhere in your webserver
+* Read the code
+* Change SCRIPT_DIR_URL to the URL of the script directory
+* Make sure Apache has write permission for all sub-directories that has images, so caching will work
+* Have fun!
+
+How to contribute:
+If you find my gallery useful, don't hesitate to contribute!
+Create a github account, fork the repository, and send me a pull request whenever you think your changes are ready.
+
+
+Elad Alfassa <elad@fedoraproject.org>
