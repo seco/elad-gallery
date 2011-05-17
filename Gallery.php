@@ -1,19 +1,19 @@
 <?php
 /*
-    This file is part of elad-gallery.
+This file is part of elad-gallery.
 
-    elad-gallery is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+elad-gallery is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    elad-gallery is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+elad-gallery is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with elad-gallery.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
 
 //Remove the array_combine function if you are using php5+
@@ -260,6 +260,25 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		gzip_page();
 	}
 	exit;
+} elseif (isset($_GET['exifThumb']) && strpos($_GET['exifThumb'],'..')===false) {
+	header("HTTP/1.1 200 OK");
+	header("Status: 200 OK");
+	header('Content-type: image/jpeg');
+	//ob_start();
+	echo(exif_thumbnail($_GET['exifThumb']));
+	$etag="galleryAjax".md5(ob_get_contents());
+	header("Etag: $etag");
+	$headers = apache_request_headers();
+	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
+	if ($DoIDsMatch){
+    	header('HTTP/1.1 304 Not Modified');
+    	header('Connection: close');
+		ob_end_clean();
+		exit;
+	} else {
+		gzip_page();
+	}
+	exit;
 } elseif (!isset($_GET['dir'])) { 
 	if ("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']!=$full_url) {
 		header("Location: $full_url");
@@ -299,9 +318,9 @@ function scan($dir) {
 				if (preg_match("/(.*?).jpg/i", $file)) {
 					$base64=base64_encode(exif_thumbnail($dir.'/'.$file)); //FIXME: some jpeg images has no exif thumbnail.
 					if ($dir=='.') 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='data:image/jpeg;base64,$base64' /></a></div>");
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url$basename?exifThumb=$file' /></a></div>");
 					else 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='data:image/jpeg;base64,$base64' /></a></div>");
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url$basename?exifThumb=$dir/$file' /></a></div>");
 				} elseif (preg_match("/(.*?).png/i", $file)) {
 					if ($dir=='.') 
 						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$full_url?thumb=$url$file' /></a></div>");
@@ -370,7 +389,7 @@ function scan($dir) {
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
 		<footer>
-			WIP. קוד המקור ישוחרר בקרוב ברישיון GPL.
+			WIP. <a href="https://github.com/elad661/elad-gallery">הגלריה הזו בגיטהאב</a> ברישיון GPLv3 ומעלה.
 			<br>
 			 היישום נצפה בצורה הטובה ביותר ב
 <a href="http://www.mozilla.com/">
