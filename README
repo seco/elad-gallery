@@ -21,6 +21,16 @@ Installation instructions:
 * Change SCRIPT_DIR_URL to the URL of the script directory
 * Make sure Apache has write permission for all sub-directories that has images, so caching will work
 * Have fun!
+You'll probably want to add these lines to your .htaccess:
+AddDefaultCharset UTF-8
+AddType video/ogg ogg ogv
+AddType audio/ogg oga
+AddType video/webm webm
+AddType image/svg+xml svg
+<FilesMatch "\.(js|css|svg|appcache|html|htm)$">
+	SetOutputFilter DEFLATE
+</FilesMatch>
+FileETag MTime Size
 
 How to contribute:
 If you find my gallery useful, don't hesitate to contribute!
