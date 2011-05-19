@@ -346,7 +346,7 @@ function scan($dir) {
 					if ($dir=='.') 
 						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
 					else 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
 				} elseif (preg_match("/(.*?).ogv/i", $file)) {
 					if ($dir=='.') 
 						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
