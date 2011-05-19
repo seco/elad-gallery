@@ -130,16 +130,16 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	$dir=dirname($path);
 	$basename=$pathinfo['basename'];
 	$md5=md5_file($path);
-	$thumbdir=".thumbs";
+	$thumbdir="thumbs";
 	$percent = 0.2;
 	if (isset($_GET['scale'])) {
 		switch($_GET['scale']) {
 			case "medium":
-				$thumbdir=".thumbs-med";
+				$thumbdir="thumbs-med";
 				$percent=0.5;
 			break;
 			case "high":
-				$thumbdir=".thumbs-high";
+				$thumbdir="thumbs-high";
 				$percent=0.8;
 			break;
 		}
@@ -344,14 +344,14 @@ function scan($dir) {
 						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$full_url?thumb=$url$dir/$file' /></a></div>");
 				} elseif (preg_match("/(.*?).webm/i", $file)) {
 					if ($dir=='.') 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/video-webm.svg' /></a></div>");
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
 					else 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/video-webm.svg' /></a></div>");
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
 				} elseif (preg_match("/(.*?).ogv/i", $file)) {
 					if ($dir=='.') 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/video-ogv.svg' /></a></div>");
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
 					else 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/video-ogv.svg' /></a></div>");
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
 				}				
 				$y++;
 			}
