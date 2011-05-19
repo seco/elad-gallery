@@ -1,5 +1,8 @@
 #!/bin/bash
-#This is a build script for updating translations
+# elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes PHP, CSS3 and HTML5.
+# This is a build script for updating translations
+#	Copyright (C) 2010-2011  Elad Alfassa <elad@fedoraproject.org>
+#
 #    This file is part of elad-gallery.
 #
 #    elad-gallery is free software: you can redistribute it and/or modify

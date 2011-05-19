@@ -1,19 +1,22 @@
 <?php
 /*
-This file is part of elad-gallery.
+elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes PHP, CSS3 and HTML5.
+	Copyright (C) 2010-2011  Elad Alfassa <elad@fedoraproject.org>
 
-elad-gallery is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+	This file is part of elad-gallery.
 
-elad-gallery is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+	elad-gallery is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-You should have received a copy of the GNU General Public License
-along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
+	elad-gallery is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
 
 //Remove the array_combine function if you are using php5+
