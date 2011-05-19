@@ -604,3 +604,9 @@ html:lang(he) kbd {
 	margin-right: 0px;
 	margin-left: 10px;
 }
+canvas#fft {
+	display:block;
+}
+div#info audio {
+	border: none;
+}
