@@ -223,7 +223,7 @@ div#content.bigger {
 div#content.bigger #tools {
 	margin-top:10px;
 }
-div#info img, div#info video {
+div#info img, div#info video, div#info audio {
 	display: inline-block;
 	vertical-align: middle;
 	border-radius: 6px;

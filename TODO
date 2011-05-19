@@ -1,7 +1,6 @@
 TODO List:
 * Clean up.
 * Get gettext to work.
-* Support audio files
 * Add a middle stage between low quality and high quallity
 * Make zoom smarter
 * Write documentation

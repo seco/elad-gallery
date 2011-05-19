@@ -239,8 +239,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 			$f=$FArray[0]/$FArray[1];
 			echo("<tr><td>". trans("F number:") ."</td><td>". $f ."</td></tr>");
 		}
-
-	} else if (!preg_match("/(.*?).ogv/i", $path) && !preg_match("/(.*?).webm/i", $path)) {
+	} else if (!preg_match("/(.*?).ogv/i", $path) && !preg_match("/(.*?).webm/i", $path) && !preg_match("/(.*?).oga/i", $path)) {
 		list($width, $height) = getimagesize($path);
 		echo("<tr><td>". trans("Dimensions:") ."</td><td>". $width."x".$height ."</td></tr>");
 	}
@@ -330,7 +329,7 @@ function scan($dir) {
 				$url1=$_SERVER['REQUEST_URI'];
 				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file<span></div></a>");
 			} 
-			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file))) {
+			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
 				if (preg_match("/(.*?).jpg/i", $file)) {
 					$base64=base64_encode(exif_thumbnail($dir.'/'.$file)); //FIXME: some jpeg images has no exif thumbnail.
 					if ($dir=='.') 
@@ -352,6 +351,11 @@ function scan($dir) {
 						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
 					else 
 						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
+				} elseif (preg_match("/(.*?).oga/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/audio.svg' /></a></div>");
+					else 
+						echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/audio.svg' /></a></div>");
 				}				
 				$y++;
 			}

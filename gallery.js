@@ -214,7 +214,7 @@ function fillContent(element, content) {
 	thumbScale=1;
 	var thumbStyle="";
 	var link=document.createElement("a");
-	if (!element.classList.contains("vid")) {
+	if (!element.classList.contains("vid") && !element.classList.contains("aud")) {
 		link.href=element.firstChild.href;
 	}
 	link.className="non"
@@ -268,10 +268,12 @@ function fillContent(element, content) {
 	};
 	var req;
 	var thumb;
-	if (!element.classList.contains("vid"))
+	if (!element.classList.contains("vid") && !element.classList.contains("aud"))
 		thumb=document.createElement("img");
-	else
+	else if (element.classList.contains("vid"))
 		thumb=document.createElement("video");
+	else if (element.classList.contains("aud"))
+		thumb=document.createElement("audio");
 	if (window.XMLHttpRequest) { // Any modern browser
     	req = new XMLHttpRequest();
 	} else if (window.ActiveXObject) { // IE
@@ -297,7 +299,7 @@ function fillContent(element, content) {
 		}
 	};
 	req.send(null);
-	if (!element.classList.contains("vid")) {
+	if (!element.classList.contains("vid") && !element.classList.contains("aud")) {
 		throbContainer=document.createElement("div");
 		throbContainer.id="throbContainer";
 		content.appendChild(throbContainer);
@@ -320,7 +322,7 @@ function fillContent(element, content) {
 		thumbAngle=thumbAngle-90;
 		thumbRotate(thumb, thumbAngle);
 	};
-	if (!element.classList.contains("vid")) {
+	if (!element.classList.contains("vid") && !element.classList.contains("aud")) {
 		thumb.style.opacity="0";
 		var hq=document.getElementById("hq");
 		if (hq.checked==false) {
