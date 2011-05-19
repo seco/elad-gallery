@@ -485,8 +485,7 @@ div.slideshow img {
 	margin-right: auto;
 	margin-left:auto;
 	margin-bottom:20px;
-	position: absolute;
-	/*left:14%;*/
+	display:block;
 	top:0;
 	border-radius:6px;
 	-moz-transition: all 1s;
