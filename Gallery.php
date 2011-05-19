@@ -21,7 +21,7 @@ function array_combine($arr1, $arr2) {
     $out = array();
    
     $arr1 = array_values($arr1);
-    $arr2 = array_values($arr2);
+    $arr2 = array_values($arr2);	
    
     foreach($arr1 as $key1 => $value1) {
         $out[(string)$value1] = $arr2[$key1];
@@ -127,11 +127,25 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	$dir=dirname($path);
 	$basename=$pathinfo['basename'];
 	$md5=md5_file($path);
-	$thumbfile="$dir/.thumbs/$basename@md5=$md5";
+	$thumbdir=".thumbs";
+	$percent = 0.2;
+	header("Etag: $etag");
+	if (isset($_GET['scale'])) {
+		switch($_GET['scale']) {
+			case "medium":
+				$thumbdir=".thumbs-med";
+				$percent=0.5;
+			break;
+			case "high":
+				$thumbdir=".thumbs-high";
+				$percent=0.8;
+			break;
+		}
+	}
+	$thumbfile="$dir/.$thumbdir/$basename@md5=$md5";
 	$fs = stat($path);
 	$etag=sprintf('"thumb%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
 	$headers = apache_request_headers();
-	header("Etag: $etag");
 	if (preg_match("/(.*?).jpg/i", $path)) {
 		header('Content-type: image/jpeg');
 		$type="jpeg";
@@ -141,8 +155,8 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		header('Content-type: image/png');
 		$type="png";
 	}
-	if (!file_exists($dir."/.thumbs")) {
-		mkdir($dir."/.thumbs");
+	if (!file_exists($dir."/.$thumbdir")) {
+		mkdir($dir."/.$thumbdir");
 	}
 	if (file_exists($thumbfile)) {
 		$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
@@ -155,7 +169,6 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 			readfile($thumbfile);
 		}
 	} else {
-		$percent = 0.2;
 		list($width, $height) = getimagesize($path);
 		$newwidth = $width * $percent;
 		$newheight = $height * $percent;
