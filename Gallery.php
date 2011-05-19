@@ -206,7 +206,6 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	//ob_start();
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['exif']);
 	$fs = stat($path);
-	$etag=sprintf('"info%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
 	if (preg_match("/(.*?).jpg/i", $path))
 		$exif=@exif_read_data($path);
 	else
@@ -241,10 +240,11 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 			echo("<tr><td>". trans("F number:") ."</td><td>". $f ."</td></tr>");
 		}
 
-	} else {
+	} else if (!preg_match("/(.*?).ogv/i", $path) && !preg_match("/(.*?).webm/i", $path)) {
 		list($width, $height) = getimagesize($path);
 		echo("<tr><td>". trans("Dimensions:") ."</td><td>". $width."x".$height ."</td></tr>");
 	}
+	$etag="info".md5(ob_get_contents());
 	header("Etag: $etag");
 	$headers = apache_request_headers();
 	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
@@ -330,7 +330,7 @@ function scan($dir) {
 				$url1=$_SERVER['REQUEST_URI'];
 				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file<span></div></a>");
 			} 
-			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file))) {
+			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file))) {
 				if (preg_match("/(.*?).jpg/i", $file)) {
 					$base64=base64_encode(exif_thumbnail($dir.'/'.$file)); //FIXME: some jpeg images has no exif thumbnail.
 					if ($dir=='.') 
@@ -342,6 +342,16 @@ function scan($dir) {
 						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$full_url?thumb=$url$file' /></a></div>");
 					else 
 						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$full_url?thumb=$url$dir/$file' /></a></div>");
+				} elseif (preg_match("/(.*?).webm/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/video-webm.svg' /></a></div>");
+					else 
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/video-webm.svg' /></a></div>");
+				} elseif (preg_match("/(.*?).ogv/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/video-ogv.svg' /></a></div>");
+					else 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/video-ogv.svg' /></a></div>");
 				}				
 				$y++;
 			}

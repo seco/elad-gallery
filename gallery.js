@@ -1,22 +1,3 @@
-/*
-elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes PHP, CSS3 and HTML5.
-	Copyright (C) 2010-2011  Elad Alfassa <elad@fedoraproject.org>
-
-    This file is part of elad-gallery.
-
-    elad-gallery is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    elad-gallery is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with elad-gallery.  If not, see <http://www.gnu.org/licenses/>.
-*/
 var inhibitHashChange=false, hashTimeout;
 var dir="@@";
 var ScriptURI;
@@ -233,7 +214,9 @@ function fillContent(element, content) {
 	thumbScale=1;
 	var thumbStyle="";
 	var link=document.createElement("a");
-	link.href=element.firstChild.href;
+	if (!element.classList.contains("vid")) {
+		link.href=element.firstChild.href;
+	}
 	link.className="non"
 	var data = document.createElement("div");
 	data.className="data";
@@ -284,13 +267,17 @@ function fillContent(element, content) {
 		}
 	};
 	var req;
-	var thumb=document.createElement("img");
+	var thumb;
+	if (!element.classList.contains("vid"))
+		thumb=document.createElement("img");
+	else
+		thumb=document.createElement("video");
 	if (window.XMLHttpRequest) { // Any modern browser
     	req = new XMLHttpRequest();
 	} else if (window.ActiveXObject) { // IE
     	req = new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	req.open('GET', ScriptURI+'?exif='+link.href, true);
+	req.open('GET', ScriptURI+'?exif='+element.firstChild.href, true);
 	req.onreadystatechange = function (aEvt) {
 		if (req.readyState == 4) {
 			if(req.status == 200) {
@@ -310,11 +297,13 @@ function fillContent(element, content) {
 		}
 	};
 	req.send(null);
-	throbContainer=document.createElement("div");
-	throbContainer.id="throbContainer";
-	content.appendChild(throbContainer);
-	throbObj=new Throbber(throbContainer);
-	throbObj.throb();
+	if (!element.classList.contains("vid")) {
+		throbContainer=document.createElement("div");
+		throbContainer.id="throbContainer";
+		content.appendChild(throbContainer);
+		throbObj=new Throbber(throbContainer);
+		throbObj.throb();
+	}
 	content.appendChild(tools);
 	var btn90r=document.createElement("span");
 	btn90r.innerHTML="↻";
@@ -331,35 +320,42 @@ function fillContent(element, content) {
 		thumbAngle=thumbAngle-90;
 		thumbRotate(thumb, thumbAngle);
 	};
-	thumb.style.opacity="0";
-	var hq=document.getElementById("hq");
-	if (hq.checked==false) {
-		thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
+	if (!element.classList.contains("vid")) {
+		thumb.style.opacity="0";
+		var hq=document.getElementById("hq");
+		if (hq.checked==false) {
+			thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
+		} else {
+			switchHQ(content,element,thumb);
+		}
+		hq.addEventListener("click", function() {
+			if(document.body.lastChild.id=="info") {
+				if (hq.checked==false) {
+					thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
+					thumb.style.resize="none";
+				}
+				else {
+					switchHQ(content,element,thumb);		
+				}
+			}
+		}, false);
+		thumb.onload=function() {
+			throbObj.stop();
+			var oldnode=content.removeChild(throbContainer);
+			thumb.style.opacity="1";
+			tools.appendChild(btn90r);
+			tools.appendChild(btn90l);
+			thumb.className="norm";
+			if (content.offsetHeight>=window.innerHeight-50 && data.className=="data") {
+				showdata.onclick();
+			}
+		};
 	} else {
-		switchHQ(content,element,thumb);
-	}
-	hq.addEventListener("click", function() {
-		if(document.body.lastChild.id=="info") {
-			if (hq.checked==false) {
-				thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
-				thumb.style.resize="none";
-			}
-			else {
-				switchHQ(content,element,thumb);		
-			}
-		}
-	}, false);
-	thumb.onload=function() {
-		throbObj.stop();
-		var oldnode=content.removeChild(throbContainer);
-		thumb.style.opacity="1";
-		tools.appendChild(btn90r);
-		tools.appendChild(btn90l);
+		thumb.src=element.firstChild.href;
+		thumb.controls=true;
 		thumb.className="norm";
-		if (content.offsetHeight>=window.innerHeight-50 && data.className=="data") {
-			showdata.onclick();
-		}
-	};
+		thumb.preload=true;	
+	}
 	link.appendChild(thumb);
 }
 function thumbRotate(thumb, angle) {
