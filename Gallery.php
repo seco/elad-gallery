@@ -326,7 +326,7 @@ function scan($dir) {
 		sort($filearray);
 		$y=0;
 		foreach($filearray as $file) {
-			if (is_dir($file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale") {
+			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale") {
 				$url1=$_SERVER['REQUEST_URI'];
 				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file<span></div></a>");
 			} 
