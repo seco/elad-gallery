@@ -162,10 +162,10 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		header('Content-type: image/png');
 		$type="png";
 	}
-	if (!file_exists($dir."/.$thumbdir")) {
+	if (!file_exists($dir."/.$thumbdir") && is_writable($dir."/.$thumbdir")) {
 		mkdir($dir."/.$thumbdir");
 	}
-	if (file_exists($thumbfile)) {
+	if (file_exists($dir."/.$thumbdir") && file_exists($thumbfile)) {
 		$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
 		if ($DoIDsMatch){
     		header('HTTP/1.1 304 Not Modified');
@@ -180,6 +180,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		$newwidth = $width * $percent;
 		$newheight = $height * $percent;
 		$thumb = imagecreatetruecolor($newwidth, $newheight);
+		$has_thumb;
 		imageinterlace($thumb, 1); //Progressive JPEG loads faster
 		imageantialias($thumb, true); //Antialiasing
 		if ($type=='jpeg')
@@ -188,13 +189,16 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 			$source = imagecreatefrompng($path);
 		imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 		imagedestroy($source);
-		if ($type=='jpeg')
-			imagejpeg($thumb,$thumbfile);
-		elseif ($type=='png')
-		{
-			imagepng($thumb,$thumbfile);	
+		if (is_writable($thumbfile)) {
+			if ($type=='jpeg')
+				imagejpeg($thumb,$thumbfile);
+			elseif ($type=='png')
+				imagepng($thumb,$thumbfile);	
+			imagedestroy($thumb);
+			$has_thumb=true;
+		} else {
+			$has_thumb=false;
 		}
-		imagedestroy($thumb);
 		$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
 		if ($DoIDsMatch){
 	    	header('HTTP/1.1 304 Not Modified');
@@ -202,7 +206,15 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 			ob_end_clean();
 			exit;
 		} else {
-			readfile($thumbfile);
+			if ($has_thumb)
+				readfile($thumbfile);
+			else {
+				if ($type=='jpeg')
+					imagejpeg($thumb);
+				elseif ($type=='png')
+					imagepng($thumb);	
+				imagedestroy($thumb);
+			}
 		}
 	}
 	exit;
