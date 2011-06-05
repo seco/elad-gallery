@@ -19,8 +19,8 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
 
-//Remove the array_combine function if you are using php5+
-function array_combine($arr1, $arr2) { 
+//Uncomment the array_combine function if you are using php4
+/*function array_combine($arr1, $arr2) { 
     $out = array();
    
     $arr1 = array_values($arr1);
@@ -31,7 +31,9 @@ function array_combine($arr1, $arr2) {
     }
    
     return $out;
-}
+}*/
+require_once("settings.php");
+
 //Detect preferd langauge (TODO: add a way to override browser setting)
 function detect_lang() {
 	$langs = array();
@@ -103,7 +105,6 @@ function isBuggyIe() {
     );
 }
 isBuggyIe() || ob_start("ob_gzhandler");
-define('SCRIPT_DIR_URL', "http://www.doom.co.il/elad/pics/");
 ini_set('memory_limit', '64M');
 header('Content-Type: text/html; charset=utf-8');  
 function gzip_page() {
@@ -112,7 +113,10 @@ function gzip_page() {
 $pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
 $url=SCRIPT_DIR_URL;
 $basename=$pathinfo['basename'];
-$full_url=$url.$basename;
+if (IS_DIR_INDEX)
+	$full_url=$url;
+else
+	$full_url=$url.$basename;
 function formatBytes($bytes, $precision = 2) {
     $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
   

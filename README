@@ -18,7 +18,7 @@ Whislist (see also TODO in a separate file):
 Installation instructions:
 * Put the files somewhere in your webserver
 * Read the code
-* Change SCRIPT_DIR_URL to the URL of the script directory
+* Change settings in settings.php to match your setup
 * Make sure Apache has write permission for all sub-directories that has images, so caching will work
 * Have fun!
 You'll probably want to add these lines to your .htaccess:
