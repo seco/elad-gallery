@@ -18,20 +18,6 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
-
-//Uncomment the array_combine function if you are using php4
-/*function array_combine($arr1, $arr2) { 
-    $out = array();
-   
-    $arr1 = array_values($arr1);
-    $arr2 = array_values($arr2);	
-   
-    foreach($arr1 as $key1 => $value1) {
-        $out[(string)$value1] = $arr2[$key1];
-    }
-   
-    return $out;
-}*/
 require_once("settings.php");
 
 //Detect preferd langauge (TODO: add a way to override browser setting)
