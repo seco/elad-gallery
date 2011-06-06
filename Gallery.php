@@ -383,6 +383,14 @@ function scan($dir) {
 		<title><?=TITLE?></title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="gallery.css" />
+		<?
+			//Load user style, if any
+			if (defined('USER_STYLE') && USER_STYLE!=false) { 
+		?>
+		<link rel="stylesheet" type="text/css" href="<?=USER_STYLE?>" />
+		<?
+			}
+		?>
 		<script type="text/javascript" src="gallery.js"></script>
 	</head>
 	<body onload="init('<?=$full_url ?>');">
