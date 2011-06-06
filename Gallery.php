@@ -18,7 +18,12 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
-require_once("settings.php");
+
+//Neatly handle settings file
+if ((@include_once("settings.php"))!= 'OK')
+ die("Please read README for installation instructions. (settings file missing)");
+if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
+ die("Error: Missing non-optional settings options. Please see README for more information");
 
 //Detect preferd langauge (TODO: add a way to override browser setting)
 function detect_lang() {
@@ -76,6 +81,7 @@ function trans($what) {
 		return $what;
 	}
 }
+
 function isBuggyIe() {
     $ua = $_SERVER['HTTP_USER_AGENT'];
     // quick escape for non-IEs
@@ -90,12 +96,12 @@ function isBuggyIe() {
         || ($version == 6  && false === strpos($ua, 'SV1'))
     );
 }
+//Starting compressionable output buffer
 isBuggyIe() || ob_start("ob_gzhandler");
 ini_set('memory_limit', '64M');
 header('Content-Type: text/html; charset=utf-8');  
-function gzip_page() {
-	@ob_end_flush();
-}
+
+//Some useful vars
 $pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
 $url=SCRIPT_DIR_URL;
 $basename=$pathinfo['basename'];
@@ -103,6 +109,8 @@ if (IS_DIR_INDEX)
 	$full_url=$url;
 else
 	$full_url=$url.$basename;
+
+//Format bytes to a human readable form 
 function formatBytes($bytes, $precision = 2) {
     $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
   
@@ -114,6 +122,8 @@ function formatBytes($bytes, $precision = 2) {
   
     return round($bytes, $precision) . ' ' . $units[$pow];
 } 
+
+//Thumbnail generation
 if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['thumb']);
 	$pathinfo=pathinfo($path);
@@ -204,8 +214,8 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		}
 	}
 	exit;
+//Exif data fetching
 } elseif (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
-	//ob_start();
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['exif']);
 	$fs = stat($path);
 	if (preg_match("/(.*?).jpg/i", $path))
@@ -255,14 +265,13 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		ob_end_clean();
 		exit;
 	} else {
-		gzip_page();
+		@ob_end_flush();
 	}
 	exit;
 } elseif (isset($_GET['ajaxDir']) && strpos($_GET['ajaxDir'],'..')===false) {
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
 	header('Content-Type: text/html; charset=utf-8'); 
-	//ob_start();
 	scan($_GET['ajaxDir']);	
 	$etag="galleryAjax".md5(ob_get_contents());
 	header("Etag: $etag");
@@ -274,14 +283,14 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		ob_end_clean();
 		exit;
 	} else {
-		gzip_page();
+		@ob_end_flush();
 	}
 	exit;
+//Fetch exif thumbnail
 } elseif (isset($_GET['exifThumb']) && strpos($_GET['exifThumb'],'..')===false) {
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
 	header('Content-type: image/jpeg');
-	//ob_start();
 	echo(exif_thumbnail($_GET['exifThumb']));
 	$etag="galleryAjax".md5(ob_get_contents());
 	header("Etag: $etag");
@@ -293,7 +302,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		ob_end_clean();
 		exit;
 	} else {
-		gzip_page();
+		@ob_end_flush();
 	}
 	exit;
 } elseif (!isset($_GET['dir'])) { 
@@ -302,6 +311,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		die("redirecting");
 	}
 }
+//Proccess directory
 function scan($dir) {
 	$pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
 	$url=SCRIPT_DIR_URL;
@@ -366,12 +376,11 @@ function scan($dir) {
 		die('Configuration error');
 	}
 }
-//ob_start();
 ?>
 <!doctype html>
 <html lang='<?=LANG?>'>
 	<head>
-		<title>גלריית תמונות - אלעד אלפסה</title> <!-- You can modify the title to your needs -->
+		<title><?=TITLE?></title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="gallery.css" />
 		<script type="text/javascript" src="gallery.js"></script>
@@ -437,5 +446,5 @@ function scan($dir) {
 </html>
 <?
 header("Etag: ".md5(ob_get_contents())); 
-gzip_page();
+@ob_end_flush();
 ?>

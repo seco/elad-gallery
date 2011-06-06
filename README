@@ -3,7 +3,7 @@ elad-gallery is an image gallery, that was designed with the following principle
 * High performance using browser and server level cache, make it as fast as possible. 
 * Easy to use UI
 * Use as much HTML5 and CSS3 as possible
-* Have a basic support for older browsers
+* basic support for older browsers
 
 Known bugs:
 * the extract-strings.sh script is a bit broken.
@@ -18,10 +18,11 @@ Whislist (see also TODO in a separate file):
 Installation instructions:
 * Put the files somewhere in your webserver
 * Read the code
-* Change settings in settings.php to match your setup
+* Edit settings.php.example so it would match your setup and rename it to settings.php
 * Make sure Apache has write permission for all sub-directories that has images, so caching will work
 * Have fun!
 You'll probably want to add these lines to your .htaccess:
+
 AddDefaultCharset UTF-8
 AddType video/ogg ogg ogv
 AddType audio/ogg oga

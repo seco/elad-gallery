@@ -1,0 +1,6 @@
+<?
+	define('SCRIPT_DIR_URL', "http://example.com/exmaple/"); //URL to the directory where Gallery.php is.
+	define('IS_DIR_INDEX', true); //set to true if you have set DirectoryIndex Gallery.php in your .htaccess file.
+	define('TITLE', 'Page title goes here'); //Page title
+	return('OK'); //Tells gallery.php that the settings file is OK.
+?>
