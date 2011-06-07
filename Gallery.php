@@ -326,6 +326,15 @@ function scan($dir) {
 		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../<span></div></a><br>");	
 	}
 	echo("Directory: $dir<br>");
+	if (file_exists($dir."/desc")) {
+		?>
+		<div class="DirDesc">
+		<?
+		echo file_get_contents($dir."/desc");
+		?>
+		</div>
+		<?	
+	}
 	$filearray=array();
 	$i=0;
 	if ($handle = opendir($dir)) {
@@ -398,6 +407,7 @@ function scan($dir) {
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>
+		<div id="ajaxThrobContainer"></div>
 		<span id="showsettings" onclick="toggleSettingsDialog();"><? echo trans("Settings"); ?></span>
 		<div id="galleryContainer">
 			<?
