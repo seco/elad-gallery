@@ -559,7 +559,8 @@ function thumbZoomHandler(e) {
 				localThmubScale=localThmubScale+0.5;
 				break;
 			case 109:
-				localThmubScale=localThmubScale-0.5;
+				if (localThmubScale-0.5>0)
+					localThmubScale=localThmubScale-0.5;
 				break;
 			case 37:
 				localOriginX=localOriginX-10;
