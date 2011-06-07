@@ -26,6 +26,6 @@ $lang = array (
 	'Previous picture' => '',
 	'Hide metadata' => '',
 	'*Available in high quality preview only' => '',
-	'Keyboard shortcuts' => '',
+	'Keyboard shortcuts' => ''
 );
 ?>
