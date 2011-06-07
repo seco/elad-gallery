@@ -32,6 +32,9 @@ span#showsettings {
 	padding: 3px;
 	margin: 10px;
 	float: right;
+	user-select: none;
+	-moz-user-select: none;
+	cursor: default;
 	-moz-transition: box-shadow 0.5s;
 	-o-transition: box-shadow 0.2s;
 	-webkit-transition: box-shadow 0.2s;
@@ -553,9 +556,9 @@ div#keyboard {
 	pointer-events: none;
 	direction: ltr;
 	text-align: left;
-	-moz-transition: all 2s;
-	-o-transition: all 2s;
-	-webkit-transition: all 2s;
+	-moz-transition: all 1s;
+	-o-transition: all 1s;
+	-webkit-transition: all 1s;
 }
 html:lang(he) div#keyboard {
 	direction: rtl;
@@ -568,12 +571,12 @@ div#keyboard :first-child {
 	margin-top: 0;
 }
 div#keyboard.hidden {
-	max-height: 0;
-	height:0;
+	padding: 0;
+	max-width: 0;
 	box-shadow: none;
-	-moz-transition: height 2s;
-	-o-transition: height 2s;
-	-webkit-transition: height 2s;
+	-moz-transition: all 1s;
+	-o-transition: all 1s;
+	-webkit-transition: all 1s;
 }
 span.btnK {
 	font-size:60px;
@@ -609,4 +612,6 @@ canvas#fft {
 }
 div#info audio {
 	border: none;
+	top: 135px;
+	position: absolute;
 }
