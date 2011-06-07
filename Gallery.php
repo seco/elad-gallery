@@ -236,10 +236,10 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		if (isset($exif['Model']))	
 			echo("<tr><td>". trans("Camera model:")."</td><td>".$exif['Model']."</td></tr>");
 		if (isset($exif['RelatedImageWidth'])) {
-			echo("<tr><td>". trans("Dimensions:") ."</td><td>".$exif['RelatedImageWidth']."x".$exif['RelatedImageHeight']."</td></tr>");
+			echo("<tr><td>". trans("Size:") ."</td><td>".$exif['RelatedImageWidth']."x".$exif['RelatedImageHeight']."</td></tr>");
 		} else {
 			list($width, $height) = getimagesize($path);
-			echo("<tr><td>". trans("Dimensions:") ."</td><td>". $width."x".$height ."</td></tr>");		
+			echo("<tr><td>". trans("Size:") ."</td><td>". $width."x".$height ."</td></tr>");		
 		}
 		if (isset($exif['ExposureTime'])) {
 			$ExposureArray=explode("/", $exif['ExposureTime']);
@@ -253,7 +253,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		}
 	} else if (!preg_match("/(.*?).ogv/i", $path) && !preg_match("/(.*?).webm/i", $path) && !preg_match("/(.*?).oga/i", $path)) {
 		list($width, $height) = getimagesize($path);
-		echo("<tr><td>". trans("Dimensions:") ."</td><td>". $width."x".$height ."</td></tr>");
+		echo("<tr><td>". trans("Size:") ."</td><td>". $width."x".$height ."</td></tr>");
 	}
 	$etag="info".md5(ob_get_contents());
 	header("Etag: $etag");
@@ -325,7 +325,7 @@ function scan($dir) {
 		$parent=dirname($dir);
 		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../<span></div></a><br>");	
 	}
-	echo("directory: $dir<br>");
+	echo("Directory: $dir<br>");
 	$filearray=array();
 	$i=0;
 	if ($handle = opendir($dir)) {

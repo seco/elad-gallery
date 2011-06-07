@@ -5,11 +5,11 @@ $lang = array (
 	'Creation date:' => '',
 	'Camera maker:' => '',
 	'Camera model:' => '',
-	'Dimensions:' => '',
-	'Dimensions:' => '',
+	'Size:' => '',
+	'Size:' => '',
 	'seconds' => '',
 	'F number:' => '',
-	'Dimensions:' => '',
+	'Size:' => '',
 	'Settings' => '',
 	'No' => '',
 	'High quality preview' => '',
@@ -26,6 +26,6 @@ $lang = array (
 	'Previous picture' => '',
 	'Hide metadata' => '',
 	'*Available in high quality preview only' => '',
-	'Keyboard shortcuts' => ''
+	'Keyboard shortcuts' => '',
 );
 ?>
