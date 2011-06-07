@@ -407,7 +407,6 @@ function scan($dir) {
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>
-		<div id="ajaxThrobContainer"></div>
 		<span id="showsettings" onclick="toggleSettingsDialog();"><? echo trans("Settings"); ?></span>
 		<div id="galleryContainer">
 			<?
