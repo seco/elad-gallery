@@ -323,7 +323,6 @@ function fillContent(element, content) {
 		thumbRotate(thumb, thumbAngle);
 	};
 	if (!element.classList.contains("vid") && !element.classList.contains("aud")) {
-		thumb.style.opacity="0";
 		var hq=document.getElementById("hq");
 		if (hq.checked==false) {
 			thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
@@ -344,7 +343,6 @@ function fillContent(element, content) {
 		thumb.onload=function() {
 			throbObj.stop();
 			var oldnode=content.removeChild(throbContainer);
-			thumb.style.opacity="1";
 			tools.appendChild(btn90r);
 			tools.appendChild(btn90l);
 			thumb.className="norm";
