@@ -441,7 +441,7 @@ div#galleryContainer #throbContainer {
 footer {
 	font-size: x-small;
 	text-align: center;
-	direction:rtl;
+	direction:ltr;
 	vertical-align:bottom;
 	color: #808080;
 }

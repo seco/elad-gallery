@@ -447,17 +447,8 @@ function scan($dir) {
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
 		<footer>
-			WIP. <a href="https://github.com/elad661/elad-gallery">הגלריה הזו בגיטהאב</a> ברישיון GPLv3 ומעלה.
-			<br>
-			 היישום נצפה בצורה הטובה ביותר ב
-<a href="http://www.mozilla.com/">
-פיירפוקס 4</a>,
- בצורה קצת פחות טובה בגוגל כרום (בעיות עם האנימציות), ובצורה בסיסית ביותר בדפדפנים מיושנים (IE). מומלץ להשתמש בדפדפן מודרני.
-			<div>
-				<a href="http://www.w3.org/html/logo/">
-					<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-graphics-multimedia-performance-semantics.png" width="261" height="64" alt="HTML5 Powered with CSS3 / Styling, Graphics, 3D &amp; Effects, Multimedia, Performance &amp; Integration, and Semantics" title="HTML5 Powered with CSS3 / Styling, Graphics, 3D &amp; Effects, Multimedia, Performance &amp; Integration, and Semantics">
-				</a>
-			</div>
+			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
+			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 4</a> and above.
 		</footer>
 	</body>
 </html>
