@@ -23,7 +23,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 if ((@include_once("settings.php"))!= 'OK')
  die("Please read README for installation instructions. (settings file missing)");
 if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
- die("Error: Missing non-optional settings options. Please see README for more information");
+ die("Error: Missing mandatory settings options. Please see README for more information");
 
 //Detect preferd langauge (TODO: add a way to override browser setting)
 function detect_lang() {
@@ -73,7 +73,7 @@ function trans($what) {
 	$location = 'locale/' . LANG . '.php';
 	if(file_exists($location))
 	{
-		include $location;
+		include_once $location;
 	}
 	if (isset($lang[$what])) {
 		return $lang[$what];
@@ -96,8 +96,28 @@ function isBuggyIe() {
         || ($version == 6  && false === strpos($ua, 'SV1'))
     );
 }
+//Etag checking function
+function checkEtag($etag, $flush) {
+	header("Etag: $etag");
+	$headers = apache_request_headers();
+	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
+	if ($DoIDsMatch){
+    	header('HTTP/1.1 304 Not Modified');
+    	header('Connection: close');
+		ob_end_clean();
+		exit;
+	} else {
+		if ($flush==true)
+			@ob_end_flush();
+		else
+			return false;
+	}
+}
 //Starting compressionable output buffer
-isBuggyIe() || ob_start("ob_gzhandler");
+if (isBuggyIe())
+		ob_start(); //we need OB for the etag to work.
+	else
+		ob_start("ob_gzhandler");
 ini_set('memory_limit', '64M');
 header('Content-Type: text/html; charset=utf-8');  
 
@@ -162,13 +182,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		mkdir($dir."/.$thumbdir");
 	}
 	if (file_exists($dir."/.$thumbdir") && file_exists($thumbfile)) {
-		$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
-		if ($DoIDsMatch){
-    		header('HTTP/1.1 304 Not Modified');
-    		header('Connection: close');
-			ob_end_clean();
-			exit;
-		} else {
+		if (!checkEtag($etag, false)) {
 			readfile($thumbfile);
 		}
 	} else {
@@ -195,13 +209,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		} else {
 			$has_thumb=false;
 		}
-		$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
-		if ($DoIDsMatch){
-	    	header('HTTP/1.1 304 Not Modified');
-	    	header('Connection: close');
-			ob_end_clean();
-			exit;
-		} else {
+		if (!checkEtag($etag, false)) {
 			if ($has_thumb)
 				readfile($thumbfile);
 			else {
@@ -256,17 +264,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		echo("<tr><td>". trans("Size:") ."</td><td>". $width."x".$height ."</td></tr>");
 	}
 	$etag="info".md5(ob_get_contents());
-	header("Etag: $etag");
-	$headers = apache_request_headers();
-	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
-	if ($DoIDsMatch){
-    	header('HTTP/1.1 304 Not Modified');
-    	header('Connection: close');
-		ob_end_clean();
-		exit;
-	} else {
-		@ob_end_flush();
-	}
+	checkEtag($etag, true);
 	exit;
 } elseif (isset($_GET['ajaxDir']) && strpos($_GET['ajaxDir'],'..')===false) {
 	header("HTTP/1.1 200 OK");
@@ -274,17 +272,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	header('Content-Type: text/html; charset=utf-8'); 
 	scan($_GET['ajaxDir']);	
 	$etag="galleryAjax".md5(ob_get_contents());
-	header("Etag: $etag");
-	$headers = apache_request_headers();
-	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
-	if ($DoIDsMatch){
-    	header('HTTP/1.1 304 Not Modified');
-    	header('Connection: close');
-		ob_end_clean();
-		exit;
-	} else {
-		@ob_end_flush();
-	}
+	checkEtag($etag, true);
 	exit;
 //Fetch exif thumbnail
 } elseif (isset($_GET['exifThumb']) && strpos($_GET['exifThumb'],'..')===false) {
@@ -293,17 +281,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	header('Content-type: image/jpeg');
 	echo(exif_thumbnail($_GET['exifThumb']));
 	$etag="galleryAjax".md5(ob_get_contents());
-	header("Etag: $etag");
-	$headers = apache_request_headers();
-	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
-	if ($DoIDsMatch){
-    	header('HTTP/1.1 304 Not Modified');
-    	header('Connection: close');
-		ob_end_clean();
-		exit;
-	} else {
-		@ob_end_flush();
-	}
+	checkEtag($etag, true);
 	exit;
 } elseif (!isset($_GET['dir'])) { 
 	if ("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']!=$full_url) {
@@ -330,7 +308,7 @@ function scan($dir) {
 		?>
 		<div class="DirDesc">
 		<?
-		echo file_get_contents($dir."/desc");
+			echo file_get_contents($dir."/desc");
 		?>
 		</div>
 		<?	
@@ -407,6 +385,7 @@ function scan($dir) {
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>
+		<div id="ajaxThrobContainer"></div>
 		<span id="showsettings" onclick="toggleSettingsDialog();"><? echo trans("Settings"); ?></span>
 		<div id="galleryContainer">
 			<?
@@ -446,13 +425,13 @@ function scan($dir) {
 			<div class="arrow-down"></div>
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
-		<footer>
+		<footer style="direction:ltr">
 			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
 			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 4</a> and above.
 		</footer>
 	</body>
 </html>
 <?
-header("Etag: ".md5(ob_get_contents())); 
-@ob_end_flush();
+$etag=md5(ob_get_contents()); 
+checkEtag($etag, true);
 ?>
