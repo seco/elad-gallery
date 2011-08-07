@@ -233,6 +233,31 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	$size=formatBytes(filesize($path));
 	$pathinfo=pathinfo($path);
 	$filename=$pathinfo['basename'];
+	$dir=$pathinfo['dirname'];
+	$comment="";
+	if (file_exists($dir."/metadata.xml")) {
+		$metadata = simplexml_load_file($dir."/metadata.xml");
+		$file_metadata="";
+		foreach ($metadata->file as $filenode) {
+			if ((string) $filenode->filename==$filename) {
+				$file_metadata=$filenode;
+				break;
+			}
+		}
+		if(!empty($file_metadata->name))
+			echo("<th>" . $file_metadata->name ."</th>");
+		if(!empty($file_metadata->creator))
+			echo("<tr><td>". trans("Created by:") ."</td><td>" . $file_metadata->creator ."</td></tr>");
+		if(!empty($file_metadata->licence))
+			echo("<tr><td>". trans("Licence:") ."</td><td>" . $file_metadata->licence ."</td></tr>");
+		elseif(!empty($metadata->{'default-licence'})) {
+			echo("<tr><td>". trans("Licence:") ."</td><td>" . $metadata->{'default-licence'} ."</td></tr>");
+		} else {
+			echo("<tr><td>". trans("Licence:") ."</td><td>All rights reserved</td></tr>");
+		}
+		if(!empty($file_metadata->comment))
+			$comment=$file_metadata->comment;
+	}
 	echo("<tr style='display:none'><td>" . filesize($path) ."</td></tr>");
 	echo("<tr><td>" . trans("File name:") ."</td><td>" . $filename ."</td></tr>");
 	echo("<tr><td>" . trans("File size:") . "</td><td>" . $size ."</td></tr>");
@@ -263,6 +288,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		list($width, $height) = getimagesize($path);
 		echo("<tr><td>". trans("Size:") ."</td><td>". $width."x".$height ."</td></tr>");
 	}
+	echo("<tr style='max-width: 30px'><td style='max-width: 30px'>" . $comment ."</td></tr>");
 	$etag="info".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
@@ -304,11 +330,12 @@ function scan($dir) {
 		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../<span></div></a><br>");	
 	}
 	echo("Directory: $dir<br>");
-	if (file_exists($dir."/desc")) {
+	if (file_exists($dir."/metadata.xml")) {
 		?>
 		<div class="DirDesc">
 		<?
-			echo file_get_contents($dir."/desc");
+			$metadata = simplexml_load_file($dir."/metadata.xml");
+			echo $metadata->{'folder-comment'};
 		?>
 		</div>
 		<?	
