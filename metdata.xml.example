@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="yes"?>
+<metadata>
+	<folder-comment>This text will be displayed under the directory name</folder-comment>
+	<default-licence>default license for the folder, so if all files are under the same license, you won't have to type it again and again</default-licence>
+	<file type="image">
+		<!-- the type attribute is not used, yet --> 
+		<filename>testing.png</filename> <!-- filename is the only mandatory child for the file object, otherwisw it wouldn't work -->
+		<name>Image name, eg. first testing image</name>
+		<creator>Your name</creator>
+		<comment>Comment about the file</comment>
+	</file>
+</metadata>
