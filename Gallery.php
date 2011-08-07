@@ -25,12 +25,344 @@ if ((@include_once("settings.php"))!= 'OK')
 if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
  die("Error: Missing mandatory settings options. Please see README for more information");
 
-require_once("functions.php");
+//Detect preferd langauge (TODO: add a way to override browser setting)
+function detect_lang() {
+	$langs = array();
+
+	if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	    // break up string into pieces (languages and q factors)
+	    preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $lang_parse);
+
+	    if (count($lang_parse[1])) {
+		// create a list like "en" => 0.8
+		$langs = array_combine($lang_parse[1], $lang_parse[4]);
+	    	
+		// set default to 1 for any without q factor
+		foreach ($langs as $lang => $val) {
+		    if ($val === '') $langs[$lang] = 1;
+		}
+
+		// sort list based on value	
+		arsort($langs, SORT_NUMERIC);
+	    }
+	}
+	$filearray=array();
+	$i=0;
+	if ($handle = opendir('locale/')) {
+		while (false !== ($file = readdir($handle))) {
+			if (!is_dir($file) && preg_match("/(.*?).php/i", $file))
+				$filearray[$i]=$file;
+				$i++;
+        	}
+		closedir($handle);
+	}
+	// look through sorted list and use first one that matches our languages
+	foreach ($langs as $lang => $val) {
+		if (in_array($lang.".php", $filearray) || $lang=='en') {
+			return $lang;
+		}
+	}
+	return "en";
+
+}
 
 define('LANG', detect_lang());
 
+//Return translated string
+function trans($what) {
+	$location = 'locale/' . LANG . '.php';
+	if(file_exists($location))
+	{
+		include_once $location;
+	}
+	if (isset($lang[$what])) {
+		return $lang[$what];
+	} else {
+		return $what;
+	}
+}
+
+function isBuggyIe() {
+    $ua = $_SERVER['HTTP_USER_AGENT'];
+    // quick escape for non-IEs
+    if (0 !== strpos($ua, 'Mozilla/4.0 (compatible; MSIE ')
+        || false !== strpos($ua, 'Opera')) {
+        return false;
+    }
+    // no regex = faaast
+    $version = (float)substr($ua, 30);
+    return (
+        $version < 6
+        || ($version == 6  && false === strpos($ua, 'SV1'))
+    );
+}
+//Etag checking function
+function checkEtag($etag, $flush) {
+	header("Etag: $etag");
+	$headers = apache_request_headers();
+	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
+	if ($DoIDsMatch){
+    	header('HTTP/1.1 304 Not Modified');
+    	header('Connection: close');
+		ob_end_clean();
+		exit;
+	} else {
+		if ($flush==true)
+			@ob_end_flush();
+		else
+			return false;
+	}
+}
+//Starting compressionable output buffer
+if (isBuggyIe())
+		ob_start(); //we need OB for the etag to work.
+	else
+		ob_start("ob_gzhandler");
 ini_set('memory_limit', '64M');
 header('Content-Type: text/html; charset=utf-8');  
+
+//Some useful vars
+$pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
+$url=SCRIPT_DIR_URL;
+$basename=$pathinfo['basename'];
+if (IS_DIR_INDEX)
+	$full_url=$url;
+else
+	$full_url=$url.$basename;
+
+//Format bytes to a human readable form 
+function formatBytes($bytes, $precision = 2) {
+    $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+  
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+  
+    $bytes /= pow(1024, $pow);
+  
+    return round($bytes, $precision) . ' ' . $units[$pow];
+} 
+
+//Thumbnail generation
+if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
+	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['thumb']);
+	$pathinfo=pathinfo($path);
+	$dir=dirname($path);
+	$basename=$pathinfo['basename'];
+	$md5=md5_file($path);
+	$thumbdir="thumbs";
+	$percent = 0.2;
+	if (isset($_GET['scale'])) {
+		switch($_GET['scale']) {
+			case "medium":
+				$thumbdir="thumbs-med";
+				$percent=0.5;
+			break;
+			case "high":
+				$thumbdir="thumbs-high";
+				$percent=0.8;
+			break;
+		}
+	}
+	$thumbfile="$dir/.$thumbdir/$basename@md5=$md5";
+	$fs = stat($path);
+	$etag=sprintf('"thumb%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
+	$headers = apache_request_headers();
+	header("Etag: $etag");
+	if (preg_match("/(.*?).jpg/i", $path)) {
+		header('Content-type: image/jpeg');
+		$type="jpeg";
+	}
+	elseif (preg_match("/(.*?).png/i", $path))
+	{
+		header('Content-type: image/png');
+		$type="png";
+	}
+	if (!file_exists($dir."/.$thumbdir") && is_writable($dir."/.$thumbdir")) {
+		mkdir($dir."/.$thumbdir");
+	}
+	if (file_exists($dir."/.$thumbdir") && file_exists($thumbfile)) {
+		if (!checkEtag($etag, false)) {
+			readfile($thumbfile);
+		}
+	} else {
+		list($width, $height) = getimagesize($path);
+		$newwidth = $width * $percent;
+		$newheight = $height * $percent;
+		$thumb = imagecreatetruecolor($newwidth, $newheight);
+		$has_thumb;
+		imageinterlace($thumb, 1); //Progressive JPEG loads faster
+		imageantialias($thumb, true); //Antialiasing
+		if ($type=='jpeg')
+			$source = imagecreatefromjpeg($path);
+		elseif ($type=='png')
+			$source = imagecreatefrompng($path);
+		imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+		imagedestroy($source);
+		if (is_writable($thumbfile)) {
+			if ($type=='jpeg')
+				imagejpeg($thumb,$thumbfile);
+			elseif ($type=='png')
+				imagepng($thumb,$thumbfile);	
+			imagedestroy($thumb);
+			$has_thumb=true;
+		} else {
+			$has_thumb=false;
+		}
+		if (!checkEtag($etag, false)) {
+			if ($has_thumb)
+				readfile($thumbfile);
+			else {
+				if ($type=='jpeg')
+					imagejpeg($thumb);
+				elseif ($type=='png')
+					imagepng($thumb);	
+				imagedestroy($thumb);
+			}
+		}
+	}
+	exit;
+//Exif data fetching
+} elseif (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
+	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['exif']);
+	$fs = stat($path);
+	if (preg_match("/(.*?).jpg/i", $path))
+		$exif=@exif_read_data($path);
+	else
+		$exif=false;
+	$size=formatBytes(filesize($path));
+	$pathinfo=pathinfo($path);
+	$filename=$pathinfo['basename'];
+	echo("<tr style='display:none'><td>" . filesize($path) ."</td></tr>");
+	echo("<tr><td>" . trans("File name:") ."</td><td>" . $filename ."</td></tr>");
+	echo("<tr><td>" . trans("File size:") . "</td><td>" . $size ."</td></tr>");
+	if ($exif) {
+		if (isset($exif['DateTimeOriginal']))
+			echo("<tr><td>". trans("Creation date:") ."</td><td>" . $exif['DateTimeOriginal'] ."</td></tr>");
+		if (isset($exif['Make']))
+			echo("<tr><td>". trans("Camera maker:") . "</td><td>".$exif['Make']."</td></tr>");
+		if (isset($exif['Model']))	
+			echo("<tr><td>". trans("Camera model:")."</td><td>".$exif['Model']."</td></tr>");
+		if (isset($exif['RelatedImageWidth'])) {
+			echo("<tr><td>". trans("Size:") ."</td><td>".$exif['RelatedImageWidth']."x".$exif['RelatedImageHeight']."</td></tr>");
+		} else {
+			list($width, $height) = getimagesize($path);
+			echo("<tr><td>". trans("Size:") ."</td><td>". $width."x".$height ."</td></tr>");		
+		}
+		if (isset($exif['ExposureTime'])) {
+			$ExposureArray=explode("/", $exif['ExposureTime']);
+			$Exposure=$ExposureArray[0]/$ExposureArray[1];
+			echo("<tr><td>". trans("Exposure time:") ."</td><td>". $Exposure .trans("seconds") ."</td></tr>");
+		}
+		if (isset($exif['FNumber'])) {
+			$FArray=explode("/", $exif['FNumber']);
+			$f=$FArray[0]/$FArray[1];
+			echo("<tr><td>". trans("F number:") ."</td><td>". $f ."</td></tr>");
+		}
+	} else if (!preg_match("/(.*?).ogv/i", $path) && !preg_match("/(.*?).webm/i", $path) && !preg_match("/(.*?).oga/i", $path)) {
+		list($width, $height) = getimagesize($path);
+		echo("<tr><td>". trans("Size:") ."</td><td>". $width."x".$height ."</td></tr>");
+	}
+	$etag="info".md5(ob_get_contents());
+	checkEtag($etag, true);
+	exit;
+} elseif (isset($_GET['ajaxDir']) && strpos($_GET['ajaxDir'],'..')===false) {
+	header("HTTP/1.1 200 OK");
+	header("Status: 200 OK");
+	header('Content-Type: text/html; charset=utf-8'); 
+	scan($_GET['ajaxDir']);	
+	$etag="galleryAjax".md5(ob_get_contents());
+	checkEtag($etag, true);
+	exit;
+//Fetch exif thumbnail
+} elseif (isset($_GET['exifThumb']) && strpos($_GET['exifThumb'],'..')===false) {
+	header("HTTP/1.1 200 OK");
+	header("Status: 200 OK");
+	header('Content-type: image/jpeg');
+	echo(exif_thumbnail($_GET['exifThumb']));
+	$etag="galleryAjax".md5(ob_get_contents());
+	checkEtag($etag, true);
+	exit;
+} elseif (!isset($_GET['dir'])) { 
+	if ("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']!=$full_url) {
+		header("Location: $full_url");
+		die("redirecting");
+	}
+}
+//Proccess directory
+function scan($dir) {
+	$pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
+	$url=SCRIPT_DIR_URL;
+	$basename=$pathinfo['basename'];
+	$full_url=$url.$basename;
+	if (isset($_GET['dir']) && $_GET['dir']!='.') { 
+		$parent=dirname($dir);
+		echo("<a href='$url$basename?dir=$parent'><div class='folder'><span>../<span></div></a><br>");	
+	}
+	if (isset($_GET['ajaxDir']) && $_GET['ajaxDir']!='.') {
+		$parent=dirname($dir);
+		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../<span></div></a><br>");	
+	}
+	echo("Directory: $dir<br>");
+	if (file_exists($dir."/desc")) {
+		?>
+		<div class="DirDesc">
+		<?
+			echo file_get_contents($dir."/desc");
+		?>
+		</div>
+		<?	
+	}
+	$filearray=array();
+	$i=0;
+	if ($handle = opendir($dir)) {
+		while (false !== ($file = readdir($handle))) {
+			$i++;
+			$filearray[$i]=$file;
+        	}
+		closedir($handle);
+		sort($filearray);
+		$y=0;
+		foreach($filearray as $file) {
+			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale") {
+				$url1=$_SERVER['REQUEST_URI'];
+				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file<span></div></a>");
+			} 
+			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
+				if (preg_match("/(.*?).jpg/i", $file)) {
+					$base64=base64_encode(exif_thumbnail($dir.'/'.$file)); //FIXME: some jpeg images has no exif thumbnail.
+					if ($dir=='.') 
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url$basename?exifThumb=$file' /></a></div>");
+					else 
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url$basename?exifThumb=$dir/$file' /></a></div>");
+				} elseif (preg_match("/(.*?).png/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$full_url?thumb=$url$file' /></a></div>");
+					else 
+						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$full_url?thumb=$url$dir/$file' /></a></div>");
+				} elseif (preg_match("/(.*?).webm/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
+					else 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/.icons/video-webm.svg' /></a></div>");
+				} elseif (preg_match("/(.*?).ogv/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
+					else 
+						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/video-ogv.svg' /></a></div>");
+				} elseif (preg_match("/(.*?).oga/i", $file)) {
+					if ($dir=='.') 
+						echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/audio.svg' /></a></div>");
+					else 
+						echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/audio.svg' /></a></div>");
+				}				
+				$y++;
+			}
+		}
+	} else {
+		die('Configuration error');
+	}
+}
 ?>
 <!doctype html>
 <html lang='<?=LANG?>'>
