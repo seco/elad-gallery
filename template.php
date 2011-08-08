@@ -1,11 +1,12 @@
 <?
 $lang = array (
+	'Created by:' => '',
+	'Licence:' => '',
 	'File name:' => '',
 	'File size:' => '',
 	'Creation date:' => '',
 	'Camera maker:' => '',
 	'Camera model:' => '',
-	'Size:' => '',
 	'Size:' => '',
 	'seconds' => '',
 	'F number:' => '',

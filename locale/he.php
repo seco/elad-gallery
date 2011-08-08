@@ -1,5 +1,7 @@
 <?
 $lang = array (
+	'Created by:' => 'היוצר:',
+	'Licence:' => 'רישיון',
 	'File name:' => 'שם הקובץ:',
 	'File size:' => 'גודל הקובץ',
 	'Creation date:' => 'תאריך צילום:',
