@@ -6,7 +6,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	This file is part of elad-gallery.
 
 	elad-gallery is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
+	it under the t	erms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
@@ -73,7 +73,7 @@ function trans($what) {
 	$location = 'locale/' . LANG . '.php';
 	if(file_exists($location))
 	{
-		include_once $location;
+		include $location;
 	}
 	if (isset($lang[$what])) {
 		return $lang[$what];
@@ -235,7 +235,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	$filename=$pathinfo['basename'];
 	$dir=$pathinfo['dirname'];
 	$comment="";
-	if (file_exists($dir."/metadata.xml")) {
+	if (file_exists($dir."/metadata.xml")) { //Metadata.xml handling
 		$metadata = simplexml_load_file($dir."/metadata.xml");
 		$file_metadata="";
 		foreach ($metadata->file as $filenode) {
