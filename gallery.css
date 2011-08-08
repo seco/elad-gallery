@@ -354,6 +354,10 @@ div#info .data, div#info .dataHidden {
 	margin-right: 0;
 	text-align: left;
 }
+html:lang(he) div#info .data, html:lang(he) div#info .dataHidden {
+	direction: rtl;
+	text-align: right;
+}
 div#info .hidedata {
 	vertical-align: top;
 	cursor:pointer;
