@@ -8,6 +8,7 @@ $lang = array (
 	'Camera maker:' => '',
 	'Camera model:' => '',
 	'Size:' => '',
+	'Exposure time:' => '',
 	'seconds' => '',
 	'F number:' => '',
 	'Size:' => '',

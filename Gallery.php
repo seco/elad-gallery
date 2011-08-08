@@ -277,7 +277,8 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		if (isset($exif['ExposureTime'])) {
 			$ExposureArray=explode("/", $exif['ExposureTime']);
 			$Exposure=$ExposureArray[0]/$ExposureArray[1];
-			echo("<tr><td>". trans("Exposure time:") ."</td><td>". $Exposure ." ".trans("seconds") ."</td></tr>");
+			echo("<tr><td>". trans("Exposure time:") ."</td><td>".
+			 $Exposure ." ".trans("seconds") ."</td></tr>");
 		}
 		if (isset($exif['FNumber'])) {
 			$FArray=explode("/", $exif['FNumber']);

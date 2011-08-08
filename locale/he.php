@@ -9,6 +9,7 @@ $lang = array (
 	'Camera model:' => 'סוג המצלמה:',
 	'Size:' => 'ממדים:',
 	'seconds' => 'שניות',
+	'Exposure time:' => 'זמן חשיפה:',
 	'F number:' => 'מספר F:',
 	'Settings' => 'הגדרות',
 	'No' => 'לא',
