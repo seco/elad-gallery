@@ -6,7 +6,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	This file is part of elad-gallery.
 
 	elad-gallery is free software: you can redistribute it and/or modify
-	it under the t	erms of the GNU General Public License as published by
+	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
