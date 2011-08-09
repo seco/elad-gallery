@@ -27,6 +27,21 @@ $lang = array (
 	'Previous picture' => 'התמונה הבאה',
 	'Hide metadata' => 'הגדלת התמונה לתפיסת כל חלונית המידע',
 	'*Available in high quality preview only' => '*במצב איכות גבוהה בלבד',
-	'Keyboard shortcuts' => 'קיצורי מקשים'
+	'Keyboard shortcuts' => 'קיצורי מקשים',
+	'Image gallery - initial setup' => 'גלריית תמונות - התקנה ראשונית',
+	'Compatible PHP version:' => 'גרסת PHP תואמת:',
+	'Settings file writeable: ' => 'קובץ הגדרות ניתן לכתיבה: ',
+	'Yes' => 'כן',
+	'Can\'t write settings file, check permissions' => 'לא ניתן לכתוב את קובץ ההגדרות, יש לבדוק הרשאות',
+	'Files: ' => 'קבצים: ',
+	'All files present' => 'כל הקבצים נמצאים',
+	'Some important files are missing' => 'חסרים מספר קבצים חשובים',
+	'Continue' => 'המשך',
+	'Full URL to the directory where Gallery.php is' => 'כתובת URL מלאה לתיקייה שבה נמצא הקובץ Gallery.php',
+	'invalid URL entered' => 'כתובת לא חוקית',
+	'Gallery page title' => 'כותרת דף הגלריה',
+	'URL, relative path or file name for your custom style sheet. leave empty if you don\'t have such stylesheet.' => 'כתובת URL, נתיב יחסי או שם קובץ לגיליון הסגנונות המותאם אישית שלך. אם אין לך כזה, השאר שדה זה ריק.',
+	'Create .htaccess file' => 'צור קובץ .htaccess',
+	'continue' => 'המשך'
 );
 ?>

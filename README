@@ -18,10 +18,10 @@ Whislist (see also TODO in a separate file):
 Installation instructions:
 * Put the files somewhere in your webserver
 * Read the code
-* Edit settings.php.example so it would match your setup and rename it to settings.php
+* Open setup.php in your browser
 * Make sure Apache has write permission for all sub-directories that has images, so caching will work
 * Have fun!
-You'll probably want to add these lines to your .htaccess:
+You'll probably want to add these lines to your .htaccess, if you didn't let setup.php do it:
 
 AddDefaultCharset UTF-8
 AddType video/ogg ogg ogv

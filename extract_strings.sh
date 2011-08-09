@@ -31,6 +31,15 @@ do
   echo "	'"${a[$index]}"' => ''," >> en.php
   let "index = $index + 1"
 done
+b=( $(grep "trans(\"" setup.php | sed -e "s/^.*trans(\"//" -e "s/\").*//" -e "/^$/d" ) )
+element_count=${#b[@]}
+index=0
+
+while [ "$index" -lt "$element_count" ]
+do   
+  echo "	'"${b[$index]}"' => ''," >> en.php
+  let "index = $index + 1"
+done
 echo ');' >>en.php
 echo "?>" >>en.php
 mv en.php template.php
