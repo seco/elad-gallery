@@ -18,7 +18,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
-
+define('VERSION', "0.0.1");
 //Neatly handle settings file
 if ((@include_once("settings.php"))!= 'OK')
  die("Please read README for installation instructions. (settings file missing)");
@@ -441,6 +441,7 @@ function scan($dir) {
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
 		<footer style="direction:ltr">
+			Using elad-gallery <?=VERSION?> by <a href="http://www.doom.co.il">Elad Alfassa</a><br> 
 			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
 			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 4</a> and above.
 		</footer>
