@@ -18,7 +18,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
-define('VERSION', "0.0.1");
+define('VERSION', "0.0.2-dev");
 //Neatly handle settings file
 if ((@include_once("settings.php"))!= 'OK')
  die("Please read README for installation instructions. (settings file missing)");
