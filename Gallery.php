@@ -25,6 +25,48 @@ if ((@include_once("settings.php"))!= 'OK')
 if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
  die("Error: Missing mandatory settings options. Please see README for more information");
 
+//Make sure setup.php isn't readable
+if (file_exists("setup.php") && strpos(world_premissions("setup.php"), "r")!==FALSE)
+	 die("Error: Please remove setup.php or make sure it's not readable to the outside world.");
+
+function world_premissions($file) {
+$perms = fileperms($file);
+
+if (($perms & 0xC000) == 0xC000) {
+    // Socket
+    $info = 's';
+} elseif (($perms & 0xA000) == 0xA000) {
+    // Symbolic Link
+    $info = 'l';
+} elseif (($perms & 0x8000) == 0x8000) {
+    // Regular
+    $info = '-';
+} elseif (($perms & 0x6000) == 0x6000) {
+    // Block special
+    $info = 'b';
+} elseif (($perms & 0x4000) == 0x4000) {
+    // Directory
+    $info = 'd';
+} elseif (($perms & 0x2000) == 0x2000) {
+    // Character special
+    $info = 'c';
+} elseif (($perms & 0x1000) == 0x1000) {
+    // FIFO pipe
+    $info = 'p';
+} else {
+    // Unknown
+    $info = 'u';
+}
+
+// World
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+            (($perms & 0x0200) ? 't' : 'x' ) :
+            (($perms & 0x0200) ? 'T' : '-'));
+
+return $info;
+}
 include("langauge.php");
 
 function isBuggyIe() {
