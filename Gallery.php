@@ -315,7 +315,7 @@ function scan($dir) {
 	}
 	if (isset($_GET['ajaxDir']) && $_GET['ajaxDir']!='.') {
 		$parent=dirname($dir);
-		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../<span></div></a><br>");	
+		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../</span></div></a><br>");	
 	}
 	echo("Directory: $dir<br>");
 	if (file_exists($dir."/metadata.xml")) {
@@ -341,7 +341,7 @@ function scan($dir) {
 		foreach($filearray as $file) {
 			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale") {
 				$url1=$_SERVER['REQUEST_URI'];
-				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file<span></div></a>");
+				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file</span></div></a>");
 			} 
 			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
 				if (preg_match("/(.*?).jpg/i", $file)) {
