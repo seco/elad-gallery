@@ -424,7 +424,7 @@ function scan($dir) {
 -<span class="bad"><? echo trans("low performance") ?></span></span>
 			<div class="explain"><? echo trans("High quality preview improves the preview quality in the info window, by downloading a full version of the image from the server (instead of a scaled-down version)and scaling it down in-browser. Using this feature will allow to zoom in and out. This is not recommended for slow connections. High quality preview is always enabled for files smaller than 1 MiB.")?>
 			</div>
-			<span class="checkbox"><input id="hashimg" type="checkbox" checked="true"><label for="hashimg"><? echo trans("Hash link to the info window")?></label></span>
+			<span class="checkbox"><input id="hashimg" type="checkbox" checked><label for="hashimg"><? echo trans("Hash link to the info window")?></label></span>
 <span class="default"><? echo trans("Default: enabled")?>-
 <span class="good"><? echo trans("comfortable") ?></span></span>
 			<div class="explain"><? echo trans("Hash link to the info window changes the address add add a picture ID to it when opening the info window. Using this feature will allow copying a link to open the page and the info window and sending it to friends to point them to a specific picture, but might flood the browser history with entry for every picture viewed.") ?>
