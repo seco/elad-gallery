@@ -53,7 +53,7 @@ function check() {
 	$msg="<div id='status'><ul>";	
 	$msg.="<li>".trans("Compatible PHP version:");
 	if ($status['version'])
-		$msg.=" <span class='ok'>Yes</span>";
+		$msg.=" <span class='ok'>". trans("Yes") ."</span>";
 	else
 		$msg.=" <span class='prob'>No, your version is too old</span>";
 	$msg.="</li>";
