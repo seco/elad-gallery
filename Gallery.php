@@ -344,32 +344,23 @@ function scan($dir) {
 				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file</span></div></a>");
 			} 
 			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
-				if (preg_match("/(.*?).jpg/i", $file)) {
-					$base64=base64_encode(exif_thumbnail($dir.'/'.$file)); //FIXME: some jpeg images has no exif thumbnail.
-					if ($dir=='.') 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url$basename?exifThumb=$file' alt='$file' /></a></div>");
-					else 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url$basename?exifThumb=$dir/$file' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).png/i", $file)) {
-					if ($dir=='.') 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$full_url?thumb=$url$file' alt='$file' /></a></div>");
-					else 
-						echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$full_url?thumb=$url$dir/$file' alt='$file' /></a></div>");
+				if ($dir=='.') {
+					$file_url=$url.$file;
+					$file_path=$file;
+				}
+				else
+				{
+					$file_url="$url$dir/$file";
+					$file_path="$dir/$file";
+				}
+				if (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file)) {
+					echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?exifThumb=$file_path' alt='$file' /></a></div>");
 				} elseif (preg_match("/(.*?).webm/i", $file)) {
-					if ($dir=='.') 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-webm.svg' alt='$file' /></a></div>");
-					else 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$dir/$file'><img src='$url/.icons/video-webm.svg' alt='$file' /></a></div>");
+					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/.icons/video-webm.svg' alt='$file' /></a></div>");
 				} elseif (preg_match("/(.*?).ogv/i", $file)) {
-					if ($dir=='.') 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/video-ogv.svg' alt='$file' /></a></div>");
-					else 
-						echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/video-ogv.svg' alt='$file' /></a></div>");
+					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/.icons/video-ogv.svg' alt='$file' /></a></div>");
 				} elseif (preg_match("/(.*?).oga/i", $file)) {
-					if ($dir=='.') 
-						echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$url$file'><img src='$url/.icons/audio.svg' alt='$file' /></a></div>");
-					else 
-						echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);' ><a href='$url$dir/$file'><img src='$url/.icons/audio.svg' alt='$file' /></a></div>");
+					echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/.icons/audio.svg' alt='$file' /></a></div>");
 				}				
 				$y++;
 			}
