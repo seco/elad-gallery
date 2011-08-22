@@ -388,6 +388,7 @@ function scan($dir) {
 		?>
 		<script type="text/javascript" src="gallery.js"></script>
 		<script type="text/javascript" src="fft.js"></script>
+		<script type="text/javascript" src="throbber.js"></script>
 		<script type="text/javascript" src="classList.js"></script>
 	</head>
 	<body onload="init('<?=$full_url ?>');">
