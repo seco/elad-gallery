@@ -132,7 +132,7 @@ div.image img {
 	overflow: hidden;
 }
 div.folder {
-	background: url('.icons/folder.svg');
+	background: url('folder.svg');
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: 100%;

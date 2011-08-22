@@ -22,7 +22,7 @@ function detect_lang() {
 	}
 	$filearray=array();
 	$i=0;
-	if ($handle = opendir('locale/')) {
+	if ($handle = opendir('internals/locale/')) {
 		while (false !== ($file = readdir($handle))) {
 			if (!is_dir($file) && preg_match("/(.*?).php/i", $file))
 				$filearray[$i]=$file;

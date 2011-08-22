@@ -67,7 +67,7 @@ $info .= (($perms & 0x0001) ?
 
 return $info;
 }
-include("langauge.php");
+include("internals/langauge.php");
 
 function isBuggyIe() {
     $ua = $_SERVER['HTTP_USER_AGENT'];
@@ -339,7 +339,7 @@ function scan($dir) {
 		sort($filearray);
 		$y=0;
 		foreach($filearray as $file) {
-			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale" && $file!="js") {
+			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="internals") {
 				$url1=$_SERVER['REQUEST_URI'];
 				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file</span></div></a>");
 			} 
@@ -358,11 +358,11 @@ function scan($dir) {
 				} elseif (preg_match("/(.*?).png/i", $file)) {
 					echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?thumb=$file_path' alt='$file' /></a></div>");
 				} elseif (preg_match("/(.*?).webm/i", $file)) {
-					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/.icons/video-webm.svg' alt='$file' /></a></div>");
+					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-webm.svg' alt='$file' /></a></div>");
 				} elseif (preg_match("/(.*?).ogv/i", $file)) {
-					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/.icons/video-ogv.svg' alt='$file' /></a></div>");
+					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-ogv.svg' alt='$file' /></a></div>");
 				} elseif (preg_match("/(.*?).oga/i", $file)) {
-					echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/.icons/audio.svg' alt='$file' /></a></div>");
+					echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/audio.svg' alt='$file' /></a></div>");
 				}				
 				$y++;
 			}
@@ -377,7 +377,7 @@ function scan($dir) {
 	<head>
 		<title><?=TITLE?></title>
 		<meta charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="gallery.css" />
+		<link rel="stylesheet" type="text/css" href="internals/style/gallery.css" />
 		<?
 			//Load user style, if any
 			if (defined('USER_STYLE') && USER_STYLE!='false') { 
@@ -386,16 +386,17 @@ function scan($dir) {
 		<?
 			}
 		?>
-		<script type="text/javascript" src="js/gallery.js"></script>
-		<script type="text/javascript" src="js/fft.js"></script>
-		<script type="text/javascript" src="js/throbber.js"></script>
-		<script type="text/javascript" src="js/classList.js"></script>
+		<script type="text/javascript" src="internals/js/gallery.js"></script>
+		<script type="text/javascript" src="internals/js/fft.js"></script>
+		<script type="text/javascript" src="internals/js/throbber.js"></script>
+		<script type="text/javascript" src="internals/js/classList.js"></script>
 	</head>
 	<body onload="init('<?=$full_url ?>');">
 		<?
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>
+		<div id="status"></div>
 		<div id="ajaxThrobContainer"></div>
 		<span id="showsettings" onclick="toggleSettingsDialog();"><? echo trans("Settings"); ?></span>
 		<div id="galleryContainer">
@@ -437,7 +438,7 @@ function scan($dir) {
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
 		<footer style="direction:ltr">
-			Using elad-gallery <?=VERSION?> by <a href="http://www.doom.co.il">Elad Alfassa</a><br> 
+			Using elad-gallery <?=VERSION?> by <a href="http://www.doom.co.il">Elad Alfassa</a><br>
 			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
 			Embeds DejaVu Sans font by <a href="http://dejavu-fonts.org">DejaVu fonts</a><br>
 			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 4</a> and above.
