@@ -20,7 +20,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 */
 ini_set('memory_limit', '64M');
 header('Content-Type: text/html; charset=utf-8'); 
-include("langauge.php");
+include("internals/langauge.php");
 $title=trans("Image gallery - initial setup");
 function check_status() {
 	$pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
