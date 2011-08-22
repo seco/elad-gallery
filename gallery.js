@@ -189,7 +189,7 @@ function ContentTransitionComplete(e) {
 		var info=content.parentNode;
 		var newcontent=content.parentNode.lastChild;
 		newcontent.style.display="block";
-		if (content.firstChild.className=="showdata" || content.offsetHeight>=window.innerHeight-50) {
+		if (content.firstChild.className=="showdata" || newcontent.children[2].offsetWidth+newcontent.children[1].offsetWidth>newcontent.offsetWidth) {
 			newcontent.firstChild.onclick();
 		}
 		if (newcontent.firstChild.className=="hidedata" && newcontent.children[2].className=="big") {
@@ -221,6 +221,9 @@ function newContentTransitionComplete(e) {
 		newcontent.removeEventListener("transitionend", newContentTransitionComplete, false);
 		newcontent.removeEventListener("webkitTransitionEnd", newContentTransitionComplete, false);
 		newcontent.removeEventListener("oTransitionEnd", newContentTransitionComplete, false);
+		if (newcontent.children[2].offsetWidth+newcontent.children[1].offsetWidth>newcontent.offsetWidth && newcontent.firstChild.className=="hidedata") {
+			newcontent.firstChild.onclick();
+		}
 		//this.children[2].setAttribute("style", ""); 
 		var infochildren=newcontent.parentNode.children;
 		if (me<len-1 )
@@ -264,7 +267,7 @@ function fillContent(element, content) {
 				data.removeEventListener("transitionend", func, false);
 				data.removeEventListener("webkitTransitionEnd", func, false);
 				data.removeEventListener("oTransitionEnd", func, false);
-				if (content.offsetHeight>=window.innerHeight-50) {
+				if (data.offsetWidth+thumb.offsetWidth>content.offsetWidth) {
 					data.style.display="none";	
 				}
 				showdataT=setTimeout(function() { link.className="big"; }, 3);
@@ -279,6 +282,7 @@ function fillContent(element, content) {
 			clearTimeout(showdataT);
 			link.className="non";
 			big=false;
+			data.style.removeProperty("display");
 			data.className="data";
 			showdata.className="hidedata";
 			data.style.marginRight="";
@@ -309,7 +313,7 @@ function fillContent(element, content) {
 				var filesize=tbl.firstChild.firstChild.firstChild.innerHTML;
 				if (parseInt(filesize)/1024<1024)
 					switchHQ(content, element, thumb);
-				if (content.offsetHeight>=window.innerHeight-50 && data.className=="data") {
+				if (data.offsetWidth+thumb.offsetWidth>content.offsetWidth && data.className=="data") {
 					showdata.onclick();
 				}
 			}
@@ -318,6 +322,11 @@ function fillContent(element, content) {
 		}
 	};
 	req.send(null);
+	window.onresize=function() {
+		if (data.offsetWidth+thumb.offsetWidth>content.offsetWidth && data.className=="data") {
+			showdata.onclick();
+		}
+	}
 	if (!element.classList.contains("vid") && !element.classList.contains("aud")) {
 		throbContainer=document.createElement("div");
 		throbContainer.id="throbContainer";
@@ -365,7 +374,7 @@ function fillContent(element, content) {
 			tools.appendChild(btn90r);
 			tools.appendChild(btn90l);
 			thumb.className="norm";
-			if (content.offsetHeight>=window.innerHeight-50 && data.className=="data") {
+			if (data.offsetWidth+thumb.offsetWidth>content.offsetWidth && data.className=="data") {
 				showdata.onclick();
 			}
 		};
