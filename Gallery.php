@@ -380,7 +380,7 @@ function scan($dir) {
 		<link rel="stylesheet" type="text/css" href="gallery.css" />
 		<?
 			//Load user style, if any
-			if (defined('USER_STYLE') && USER_STYLE!=false) { 
+			if (defined('USER_STYLE') && USER_STYLE!='false') { 
 		?>
 		<link rel="stylesheet" type="text/css" href="<?=USER_STYLE?>" />
 		<?
