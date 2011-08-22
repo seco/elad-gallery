@@ -19,87 +19,24 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
 define('VERSION', "0.0.2-dev");
+
 //Neatly handle settings file
 if ((@include_once("settings.php"))!= 'OK')
  die("Please read README for installation instructions. (settings file missing)");
 if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
  die("Error: Missing mandatory settings options. Please see README for more information");
 
+//Include functions
+include("internals/functions.php");
+
 //Make sure setup.php isn't readable
 if (file_exists("setup.php") && strpos(world_premissions("setup.php"), "r")!==FALSE)
 	 die("Error: Please remove setup.php or make sure it's not readable to the outside world.");
 
-function world_premissions($file) {
-$perms = fileperms($file);
-
-if (($perms & 0xC000) == 0xC000) {
-    // Socket
-    $info = 's';
-} elseif (($perms & 0xA000) == 0xA000) {
-    // Symbolic Link
-    $info = 'l';
-} elseif (($perms & 0x8000) == 0x8000) {
-    // Regular
-    $info = '-';
-} elseif (($perms & 0x6000) == 0x6000) {
-    // Block special
-    $info = 'b';
-} elseif (($perms & 0x4000) == 0x4000) {
-    // Directory
-    $info = 'd';
-} elseif (($perms & 0x2000) == 0x2000) {
-    // Character special
-    $info = 'c';
-} elseif (($perms & 0x1000) == 0x1000) {
-    // FIFO pipe
-    $info = 'p';
-} else {
-    // Unknown
-    $info = 'u';
-}
-
-// World
-$info .= (($perms & 0x0004) ? 'r' : '-');
-$info .= (($perms & 0x0002) ? 'w' : '-');
-$info .= (($perms & 0x0001) ?
-            (($perms & 0x0200) ? 't' : 'x' ) :
-            (($perms & 0x0200) ? 'T' : '-'));
-
-return $info;
-}
+//Include l10n
 include("internals/langauge.php");
 
-function isBuggyIe() {
-    $ua = $_SERVER['HTTP_USER_AGENT'];
-    // quick escape for non-IEs
-    if (0 !== strpos($ua, 'Mozilla/4.0 (compatible; MSIE ')
-        || false !== strpos($ua, 'Opera')) {
-        return false;
-    }
-    // no regex = faaast
-    $version = (float)substr($ua, 30);
-    return (
-        $version < 6
-        || ($version == 6  && false === strpos($ua, 'SV1'))
-    );
-}
-//Etag checking function
-function checkEtag($etag, $flush) {
-	header("Etag: $etag");
-	$headers = apache_request_headers();
-	$DoIDsMatch = (isset($headers['If-None-Match']) && $headers['If-None-Match']==$etag);
-	if ($DoIDsMatch){
-    	header('HTTP/1.1 304 Not Modified');
-    	header('Connection: close');
-		ob_end_clean();
-		exit;
-	} else {
-		if ($flush==true)
-			@ob_end_flush();
-		else
-			return false;
-	}
-}
+
 //Starting compressionable output buffer
 if (isBuggyIe())
 		ob_start(); //we need OB for the etag to work.
@@ -117,18 +54,6 @@ if (IS_DIR_INDEX)
 else
 	$full_url=$url.$basename;
 
-//Format bytes to a human readable form 
-function formatBytes($bytes, $precision = 2) {
-    $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
-  
-    $bytes = max($bytes, 0);
-    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-    $pow = min($pow, count($units) - 1);
-  
-    $bytes /= pow(1024, $pow);
-  
-    return round($bytes, $precision) . ' ' . $units[$pow];
-} 
 
 //Thumbnail generation
 if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
