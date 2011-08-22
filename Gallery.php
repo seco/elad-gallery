@@ -437,6 +437,7 @@ function scan($dir) {
 		<footer style="direction:ltr">
 			Using elad-gallery <?=VERSION?> by <a href="http://www.doom.co.il">Elad Alfassa</a><br> 
 			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
+			Embeds DejaVu Sans font by <a href="http://dejavu-fonts.org">DejaVu fonts</a><br>
 			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 4</a> and above.
 		</footer>
 	</body>
