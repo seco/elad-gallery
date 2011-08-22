@@ -28,7 +28,7 @@ function check_status() {
 	$status['version']=version_compare(PHP_VERSION, '5.0.0', '>=');
 	$status['settings_writable']=can_create("settings.php");
 	$status['htaccess_writable']=can_create(".htaccess");
-	$status['files']=(file_exists("langauge.php") && file_exists("Gallery.php") && file_exists("gallery.js") && file_exists("gallery.css"));
+	$status['files']=(file_exists("internals/langauge.php") && file_exists("Gallery.php") && file_exists("internals/js/gallery.js") && file_exists("internals/style/gallery.css"));
 	return $status;
 }
 function can_create($filename) {
