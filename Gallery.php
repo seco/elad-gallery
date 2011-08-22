@@ -339,7 +339,7 @@ function scan($dir) {
 		sort($filearray);
 		$y=0;
 		foreach($filearray as $file) {
-			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale") {
+			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="locale" && $file!="js") {
 				$url1=$_SERVER['REQUEST_URI'];
 				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file</span></div></a>");
 			} 
@@ -386,10 +386,10 @@ function scan($dir) {
 		<?
 			}
 		?>
-		<script type="text/javascript" src="gallery.js"></script>
-		<script type="text/javascript" src="fft.js"></script>
-		<script type="text/javascript" src="throbber.js"></script>
-		<script type="text/javascript" src="classList.js"></script>
+		<script type="text/javascript" src="js/gallery.js"></script>
+		<script type="text/javascript" src="js/fft.js"></script>
+		<script type="text/javascript" src="js/throbber.js"></script>
+		<script type="text/javascript" src="js/classList.js"></script>
 	</head>
 	<body onload="init('<?=$full_url ?>');">
 		<?
