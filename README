@@ -5,6 +5,8 @@ elad-gallery is an image gallery, that was designed with the following principle
 * Use as much HTML5 and CSS3 as possible
 * basic support for older browsers
 
+This version includes classList.js by Eli Grey, to support IE9 and Safari. It is licensed under the public domain. 
+
 Known bugs:
 * the extract-strings.sh script is a bit broken.
 * Code duplication
