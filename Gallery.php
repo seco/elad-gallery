@@ -236,11 +236,11 @@ function scan($dir) {
 	$full_url=$url.$basename;
 	if (isset($_GET['dir']) && $_GET['dir']!='.') { 
 		$parent=dirname($dir);
-		echo("<a href='$url$basename?dir=$parent'><div class='folder'><span>../<span></div></a><br>");	
+		echo("<div class='folder'><a href='$url$basename?dir=$parent'><span>../<span></a></div><br>");	
 	}
 	if (isset($_GET['ajaxDir']) && $_GET['ajaxDir']!='.') {
 		$parent=dirname($dir);
-		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../</span></div></a><br>");	
+		echo("<div class='folder'><a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><span>../</span></a></div><br>");	
 	}
 	echo("Directory: $dir<br>");
 	if (file_exists($dir."/metadata.xml")) {
@@ -266,7 +266,8 @@ function scan($dir) {
 		foreach($filearray as $file) {
 			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="internals") {
 				$url1=$_SERVER['REQUEST_URI'];
-				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file</span></div></a>");
+				echo("<div class='folder' onmouseover='showDirInfo(this,event)' id='$file'><a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><span>$file</span></a></div>");
+				echo(dirInfo($dir,$file));
 			} 
 			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
 				if ($dir=='.') {
@@ -314,6 +315,7 @@ function scan($dir) {
 		<script type="text/javascript" src="internals/js/gallery.js"></script>
 		<script type="text/javascript" src="internals/js/fft.js"></script>
 		<script type="text/javascript" src="internals/js/throbber.js"></script>
+		<script type="text/javascript" src="internals/js/dirInfo.js"></script>
 		<script type="text/javascript" src="internals/js/classList.js"></script>
 	</head>
 	<body onload="init('<?=$full_url ?>');">

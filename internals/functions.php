@@ -73,5 +73,27 @@ function formatBytes($bytes, $precision = 2) {
     $bytes /= pow(1024, $pow);
   
     return round($bytes, $precision) . ' ' . $units[$pow];
-} 
+}
+
+//Output an HTML table containing information about a specific directory
+function dirInfo($parent, $dir) {
+	$return_str="<div class='dir_info' data-for='$dir'>";
+	$total_size=0;
+	if ($handle = opendir($parent."/".$dir)) {
+		$i=0;
+		while (false !== ($file = readdir($handle))) {
+			$i++;
+			$stat=stat($parent."/".$dir."/".$file);
+			$total_size+=$stat['size'];
+        	}
+		closedir($handle);
+	} else {
+		return false;
+	}
+	$total_size=formatBytes($total_size);
+	$return_str.="<span class='file_count'>$i ".trans("Files")."</span>";
+	$return_str.="<span class='total_size'>".$total_size."</span>";
+	$return_str.="</div>";
+	return $return_str;
+}
 ?>

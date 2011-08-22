@@ -131,11 +131,13 @@ div.image img {
 	-moz-border-radius: 6px;
 	overflow: hidden;
 }
-div.folder {
+div.folder a {
 	background: url('folder.svg');
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: 100%;
+	display: inline-block;
+	height: 145px;
 	width: 145px;
 }
 div.folder span {
@@ -467,6 +469,31 @@ footer a {
 footer div {
 	margin: 10px;
 }
+/* Directory information */
+div.dir_info {
+	display:none;
+	z-index: 1;
+	pointer-events: none;
+	border-radius:6px;
+	-moz-border-radius: 6px;
+	border:1px solid grey;
+	background: rgba(73, 71, 71, 0.9);
+	text-align: center;
+	padding: 5px;
+	overflow: hidden;
+	direction: ltr;
+	color: #B2B2B2;
+	box-shadow: 5px 5px 10px black;
+}
+div.dir_info.visible {
+	display: block;
+	position: absolute;
+}
+div.dir_info span {
+	display:block;
+	
+}
+
 /* Slideshow */
 div.slideshow {
 	width: 100%;
