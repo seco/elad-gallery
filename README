@@ -6,6 +6,7 @@ elad-gallery is an image gallery, that was designed with the following principle
 * basic support for older browsers
 
 This version includes classList.js by Eli Grey, to support IE9 and Safari. It is licensed under the public domain. 
+This version also includes the DejaVu sans font, http://dejavu-fonts.org/. License information: http://dejavu-fonts.org/wiki/License
 
 Known bugs:
 * the extract-strings.sh script is a bit broken.
