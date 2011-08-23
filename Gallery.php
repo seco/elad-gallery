@@ -209,7 +209,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
 	header('Content-Type: text/html; charset=utf-8'); 
-	scan($_GET['ajaxDir']);	
+	echo(scan($_GET['ajaxDir'], $pathinfo));	
 	$etag="galleryAjax".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
@@ -226,75 +226,6 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	if ("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']!=$full_url) {
 		header("Location: $full_url");
 		die("redirecting");
-	}
-}
-//Proccess directory
-function scan($dir) {
-	$pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
-	$url=SCRIPT_DIR_URL;
-	$basename=$pathinfo['basename'];
-	$full_url=$url.$basename;
-	if (isset($_GET['dir']) && $_GET['dir']!='.') { 
-		$parent=dirname($dir);
-		echo("<div class='folder'><a href='$url$basename?dir=$parent'><span>../<span></a></div><br>");	
-	}
-	if (isset($_GET['ajaxDir']) && $_GET['ajaxDir']!='.') {
-		$parent=dirname($dir);
-		echo("<div class='folder'><a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><span>../</span></a></div><br>");	
-	}
-	echo("Directory: $dir<br>");
-	if (file_exists($dir."/metadata.xml")) {
-		?>
-		<div class="DirDesc">
-		<?
-			$metadata = simplexml_load_file($dir."/metadata.xml");
-			echo $metadata->{'folder-comment'};
-		?>
-		</div>
-		<?	
-	}
-	$filearray=array();
-	$i=0;
-	if ($handle = opendir($dir)) {
-		while (false !== ($file = readdir($handle))) {
-			$i++;
-			$filearray[$i]=$file;
-        	}
-		closedir($handle);
-		sort($filearray);
-		$y=0;
-		foreach($filearray as $file) {
-			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="internals") {
-				$url1=$_SERVER['REQUEST_URI'];
-				echo("<div class='folder' onmouseover='showDirInfo(this,event)' id='$file'><a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><span>$file</span></a></div>");
-				echo(dirInfo($dir,$file));
-			} 
-			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
-				if ($dir=='.') {
-					$file_url=$url.$file;
-					$file_path=$file;
-				}
-				else
-				{
-					$file_url="$url$dir/$file";
-					$file_path="$dir/$file";
-				}
-				if (preg_match("/(.*?).jpg/i", $file)) {
-					echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?exifThumb=$file_path' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).png/i", $file)) {
-					echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?thumb=$file_path' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).webm/i", $file)) {
-					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-webm.svg' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).ogv/i", $file)) {
-					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-ogv.svg' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).oga/i", $file)) {
-					echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/audio.svg' alt='$file' /></a></div>");
-				}				
-				$y++;
-			}
-		}
-	} else {
-		die('Configuration error');
 	}
 }
 ?>
@@ -329,13 +260,13 @@ function scan($dir) {
 		<div id="galleryContainer">
 			<?
 				if (!isset($_GET['dir'])) { 
-					scan('.');
+					echo(scan('.', $pathinfo));
 					?>
 						<script type="text/javascript">rootDisableAjax=true;</script>
 					<?
 				}
 				elseif(strpos($_GET['dir'],'..')===false) {
-					scan($_GET['dir']);				
+					echo(scan($_GET['dir'], $pathinfo));				
 				} else {
 					echo trans("No");				
 				}
