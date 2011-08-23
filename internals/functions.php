@@ -82,9 +82,11 @@ function dirInfo($parent, $dir) {
 	if ($handle = opendir($parent."/".$dir)) {
 		$i=0;
 		while (false !== ($file = readdir($handle))) {
-			$i++;
-			$stat=stat($parent."/".$dir."/".$file);
-			$total_size+=$stat['size'];
+			if ($file!='.' && $file!='..') {
+				$i++;
+				$stat=stat($parent."/".$dir."/".$file);
+				$total_size+=$stat['size'];
+			}
         	}
 		closedir($handle);
 	} else {
