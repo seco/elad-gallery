@@ -470,9 +470,19 @@ footer div {
 	margin: 10px;
 }
 /* Directory information */
+@-moz-keyframes fadeIn {
+	from {
+		opacity: 0;
+		box-shadow: none;
+	}
+	to {
+		opacity: 1;
+	}
+}
 div.dir_info {
 	display:none;
 	z-index: 1;
+	opacity: 1;
 	pointer-events: none;
 	border-radius:6px;
 	-moz-border-radius: 6px;
@@ -488,7 +498,10 @@ div.dir_info {
 div.dir_info.visible {
 	display: block;
 	position: absolute;
+	-moz-animation-duration: 0.7s;
+	-moz-animation-name: fadeIn;
 }
+
 div.dir_info span {
 	display:block;
 	
