@@ -146,10 +146,8 @@ function scan($dir,$pathinfo) {
 					$file_url="$url$dir/$file";
 					$file_path="$dir/$file";
 				}
-				if (preg_match("/(.*?).jpg/i", $file)) {
-					$return_str.="<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?exifThumb=$file_path' alt='$file' /></a></div>";
-				} elseif (preg_match("/(.*?).png/i", $file)) {
-					$return_str.="<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?thumb=$file_path' alt='$file' /></a></div>";
+				if (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file)) {
+					$return_str.="<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/thumbnail.php?file=$file_path&amp;scale=tiny' alt='$file' /></a></div>";
 				} elseif (preg_match("/(.*?).webm/i", $file)) {
 					$return_str.="<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-webm.svg' alt='$file' /></a></div>";
 				} elseif (preg_match("/(.*?).ogv/i", $file)) {

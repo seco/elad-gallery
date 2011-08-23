@@ -55,87 +55,8 @@ else
 	$full_url=$url.$basename;
 
 
-//Thumbnail generation
-if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
-	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['thumb']);
-	$pathinfo=pathinfo($path);
-	$dir=dirname($path);
-	$basename=$pathinfo['basename'];
-	$md5=md5_file($path);
-	$thumbdir="thumbs";
-	$percent = 0.2;
-	if (isset($_GET['scale'])) {
-		switch($_GET['scale']) {
-			case "medium":
-				$thumbdir="thumbs-med";
-				$percent=0.5;
-			break;
-			case "high":
-				$thumbdir="thumbs-high";
-				$percent=0.8;
-			break;
-		}
-	}
-	$thumbfile="$dir/.$thumbdir/$basename@md5=$md5";
-	$fs = stat($path);
-	$etag=sprintf('"thumb%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
-	$headers = apache_request_headers();
-	header("Etag: $etag");
-	if (preg_match("/(.*?).jpg/i", $path)) {
-		header('Content-type: image/jpeg');
-		$type="jpeg";
-	}
-	elseif (preg_match("/(.*?).png/i", $path))
-	{
-		header('Content-type: image/png');
-		$type="png";
-	}
-	if (!file_exists($dir."/.$thumbdir") && is_writable($dir."/.$thumbdir")) {
-		mkdir($dir."/.$thumbdir");
-	}
-	if (file_exists($dir."/.$thumbdir") && file_exists($thumbfile)) {
-		if (!checkEtag($etag, false)) {
-			readfile($thumbfile);
-		}
-	} else {
-		list($width, $height) = getimagesize($path);
-		$newwidth = $width * $percent;
-		$newheight = $height * $percent;
-		$thumb = imagecreatetruecolor($newwidth, $newheight);
-		$has_thumb;
-		imageinterlace($thumb, 1); //Progressive JPEG loads faster
-		imageantialias($thumb, true); //Antialiasing
-		if ($type=='jpeg')
-			$source = imagecreatefromjpeg($path);
-		elseif ($type=='png')
-			$source = imagecreatefrompng($path);
-		imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
-		imagedestroy($source);
-		if (is_writable($thumbfile)) {
-			if ($type=='jpeg')
-				imagejpeg($thumb,$thumbfile);
-			elseif ($type=='png')
-				imagepng($thumb,$thumbfile);	
-			imagedestroy($thumb);
-			$has_thumb=true;
-		} else {
-			$has_thumb=false;
-		}
-		if (!checkEtag($etag, false)) {
-			if ($has_thumb)
-				readfile($thumbfile);
-			else {
-				if ($type=='jpeg')
-					imagejpeg($thumb);
-				elseif ($type=='png')
-					imagepng($thumb);	
-				imagedestroy($thumb);
-			}
-		}
-	}
-	exit;
 //Exif data fetching
-} elseif (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
+if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['exif']);
 	$fs = stat($path);
 	if (preg_match("/(.*?).jpg/i", $path))
@@ -210,15 +131,6 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	header("Status: 200 OK");
 	header('Content-Type: text/html; charset=utf-8'); 
 	echo(scan($_GET['ajaxDir'], $pathinfo));	
-	$etag="galleryAjax".md5(ob_get_contents());
-	checkEtag($etag, true);
-	exit;
-//Fetch exif thumbnail
-} elseif (isset($_GET['exifThumb']) && strpos($_GET['exifThumb'],'..')===false) {
-	header("HTTP/1.1 200 OK");
-	header("Status: 200 OK");
-	header('Content-type: image/jpeg');
-	echo(exif_thumbnail($_GET['exifThumb']));
 	$etag="galleryAjax".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;

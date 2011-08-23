@@ -354,14 +354,14 @@ function fillContent(element, content) {
 	if (!element.classList.contains("vid") && !element.classList.contains("aud")) {
 		var hq=document.getElementById("hq");
 		if (hq.checked==false) {
-			thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
+			thumb.src=ScriptURI+"/internals/thumbnail.php?file="+element.firstChild.href;
 		} else {
 			switchHQ(content,element,thumb);
 		}
 		hq.addEventListener("click", function() {
 			if(document.body.lastChild.id=="info") {
 				if (hq.checked==false) {
-					thumb.src=ScriptURI+"?thumb="+element.firstChild.href;
+					thumb.src=ScriptURI+"/internals/thumbnail.php?file="+element.firstChild.href;
 					thumb.style.resize="none";
 				}
 				else {
