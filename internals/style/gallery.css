@@ -151,30 +151,32 @@ div#tools {
 	position:absolute;
 	bottom: 1px;
 }
-div#info, div#settings, div#keyboard {
-	position: fixed;
+div#info, div#settings, div#keyboard, div.dir_info {
 	z-index: 1;
 	border-radius:6px;
 	-moz-border-radius: 6px;
 	border:1px solid grey;
 	background: rgba(73, 71, 71, 0.9);
-	text-align: right;
-	padding: 20px;
 	overflow: hidden;
-	left: 0px;
-	right: 0px;
-	top: 0px;
+	color: #B2B2B2;
+	box-shadow: 5px 5px 10px black;
+}
+div#info, div#settings, div#keyboard {
+	min-height:300px;
+	max-width: 54%;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 10px;
 	direction: rtl;
-	color: #B2B2B2;
-	box-shadow: 5px 5px 10px black;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	position: fixed;
+	text-align: right;
+	padding: 20px;
 	-moz-transition: all 1s;
 	-o-transition: all 1s;
 	-webkit-transition: all 1s;
-	min-height:300px;
-	max-width: 54%;
 }
 div#settings {
 	max-width: 30%;
@@ -481,19 +483,11 @@ footer div {
 }
 div.dir_info {
 	display:none;
-	z-index: 1;
 	opacity: 1;
 	pointer-events: none;
-	border-radius:6px;
-	-moz-border-radius: 6px;
-	border:1px solid grey;
-	background: rgba(73, 71, 71, 0.9);
 	text-align: center;
 	padding: 5px;
-	overflow: hidden;
 	direction: ltr;
-	color: #B2B2B2;
-	box-shadow: 5px 5px 10px black;
 }
 div.dir_info.visible {
 	display: block;
