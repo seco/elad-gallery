@@ -626,6 +626,8 @@ function init(Script) {
 	close.innerHTML="X";
 	close.onclick=toggleSettingsDialog;
 	dialog.appendChild(close);
+	updateCache();
+	handleCacheEvent();
 }
 function checkboxClickHandler(e) {
 		var checkbox=e.target;

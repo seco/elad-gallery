@@ -142,7 +142,7 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 }
 ?>
 <!doctype html>
-<html lang='<?=LANG?>'>
+<html lang='<?=LANG?>' manifest='internals/appcache.php'>
 	<head>
 		<title><?=TITLE?></title>
 		<meta charset="utf-8">
@@ -155,6 +155,7 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 		<?
 			}
 		?>
+		<script type="text/javascript" src="internals/js/cache.js"></script>
 		<script type="text/javascript" src="internals/js/gallery.js"></script>
 		<script type="text/javascript" src="internals/js/fft.js"></script>
 		<script type="text/javascript" src="internals/js/throbber.js"></script>
@@ -166,7 +167,6 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>
-		<div id="status"></div>
 		<div id="ajaxThrobContainer"></div>
 		<span id="showsettings" onclick="toggleSettingsDialog();"><? echo trans("Settings"); ?></span>
 		<div id="galleryContainer">
@@ -207,6 +207,10 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 			<div class="arrow-down"></div>
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
+		<div id="net_status">
+			<span id="status"></span>
+			<span id="cache_status"></span>
+		</div>
 		<footer style="direction:ltr">
 			Using elad-gallery <?=VERSION?> by <a href="http://www.doom.co.il">Elad Alfassa</a><br>
 			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
