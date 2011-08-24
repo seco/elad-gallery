@@ -25,6 +25,9 @@ if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
 
 //Include functions
 include("functions.php");
+
+ini_set('memory_limit', '64M');
+
 if (isset($_GET['file']) && strpos($_GET['file'],'..')===false) {
 	$args['path']=str_replace(SCRIPT_DIR_URL, '', $_GET['file']);
 	if (!file_exists($args['path']) && file_exists("../$args[path]"))
@@ -36,6 +39,18 @@ if (isset($_GET['file']) && strpos($_GET['file'],'..')===false) {
 	thumbnail($args);
 }
 function thumbnail($args) {
+	if (preg_match("/(.*?).jpg/i", $args['path'])) {
+		if (isset($_GET['scale']) && $_GET['scale']=='tiny' && !isset($args['no-exif'])) {
+			exif_thumb($args);
+		}		
+		header('Content-type: image/jpeg');
+		$type="jpeg";
+	}
+	elseif (preg_match("/(.*?).png/i", $args['path']))
+	{
+		header('Content-type: image/png');
+		$type="png";
+	}
 	$thumbdir="thumbs";
 	$percent = 0.2;
 	if (isset($_GET['scale'])) {
@@ -49,18 +64,6 @@ function thumbnail($args) {
 				$percent=0.8;
 			break;
 		}
-	}
-	if (preg_match("/(.*?).jpg/i", $args['path'])) {
-		if (isset($_GET['scale']) && $_GET['scale']=='tiny' && !isset($args['no-exif'])) {
-			exif_thumb($args);
-		}		
-		header('Content-type: image/jpeg');
-		$type="jpeg";
-	}
-	elseif (preg_match("/(.*?).png/i", $args['path']))
-	{
-		header('Content-type: image/png');
-		$type="png";
 	}
 	$thumbfile="$args[dir]/.$thumbdir/$args[basename]@md5=$args[md5]";
 	$fs = stat($args['path']);
@@ -117,11 +120,7 @@ function exif_thumb($args) {
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
 	header('Content-type: image/jpeg');
-	$thumb=exif_thumbnail($args['path']);
-	if ($thumb===false)
-		return false;
-	else
-		echo $thumb;
+	echo(exif_thumbnail($args['path']));
 	$etag="exif_thumb".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
