@@ -18,6 +18,13 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
+
+include("functions.php");
+if (isBuggyIe())
+		ob_start(); //we need OB for the etag to work.
+	else
+		ob_start("ob_gzhandler");
+
 header('Content-Type: text/cache-manifest');
 header('Cache-Control: no-cache');
 $hash_sum='';
@@ -44,6 +51,10 @@ $hash_sum=process_dir('.');
 echo "\nNETWORK:\n";
 echo '*' . "\n";
 echo '../*' . "\n";
+echo '*/*' . "\n";
 
 echo("\n#Fingerprint: ".md5($hash_sum)."\n");
+
+$etag=md5(ob_get_contents()); 
+checkEtag($etag, true);
 ?>
