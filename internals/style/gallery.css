@@ -131,11 +131,13 @@ div.image img {
 	-moz-border-radius: 6px;
 	overflow: hidden;
 }
-div.folder {
+div.folder a {
 	background: url('folder.svg');
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: 100%;
+	display: inline-block;
+	height: 145px;
 	width: 145px;
 }
 div.folder span {
@@ -149,30 +151,32 @@ div#tools {
 	position:absolute;
 	bottom: 1px;
 }
-div#info, div#settings, div#keyboard {
-	position: fixed;
+div#info, div#settings, div#keyboard, div.dir_info {
 	z-index: 1;
 	border-radius:6px;
 	-moz-border-radius: 6px;
 	border:1px solid grey;
 	background: rgba(73, 71, 71, 0.9);
-	text-align: right;
-	padding: 20px;
 	overflow: hidden;
-	left: 0px;
-	right: 0px;
-	top: 0px;
+	color: #B2B2B2;
+	box-shadow: 5px 5px 10px black;
+}
+div#info, div#settings, div#keyboard {
+	min-height:300px;
+	max-width: 54%;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 10px;
 	direction: rtl;
-	color: #B2B2B2;
-	box-shadow: 5px 5px 10px black;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	position: fixed;
+	text-align: right;
+	padding: 20px;
 	-moz-transition: all 1s;
 	-o-transition: all 1s;
 	-webkit-transition: all 1s;
-	min-height:300px;
-	max-width: 54%;
 }
 div#settings {
 	max-width: 30%;
@@ -467,6 +471,36 @@ footer a {
 footer div {
 	margin: 10px;
 }
+/* Directory information */
+@-moz-keyframes fadeIn {
+	from {
+		opacity: 0;
+		box-shadow: none;
+	}
+	to {
+		opacity: 1;
+	}
+}
+div.dir_info {
+	display:none;
+	opacity: 1;
+	pointer-events: none;
+	text-align: center;
+	padding: 5px;
+	direction: ltr;
+}
+div.dir_info.visible {
+	display: block;
+	position: absolute;
+	-moz-animation-duration: 0.7s;
+	-moz-animation-name: fadeIn;
+}
+
+div.dir_info span {
+	display:block;
+	
+}
+
 /* Slideshow */
 div.slideshow {
 	width: 100%;
@@ -629,72 +663,4 @@ div#info audio {
 	border: none;
 	top: 135px;
 	position: absolute;
-}
-
-/* Setup page */
-body.setup form {
-	max-width: 610px;
-	margin-right: auto;
-	margin-left: auto;
-	background: rgb(204,204,204);
-	border-radius: 6px;
-	padding-bottom: 5px;
-	box-shadow: 5px 5px 10px black;
-}
-
-body.setup form table {
-	max-width: 600px;
-	padding-right: 5px;
-	padding-left: 5px;
-	display: block;
-}
-body.setup input[type="text"], body.setup input[type="url"] {
-	border-radius: 6px;
-	border: 1px black solid;
-	-moz-transition: 1s all;
-}
-body.setup input[type="text"]:focus:valid, body.setup input[type="url"]:focus:valid {
-	box-shadow: 1px 1px 3px black;
-	-moz-transition: 1s all;
-}
-body.setup input[type="submit"] {
-	margin-right: auto;
-	margin-left: auto;
-	max-width: 600px;
-	display: block;
-}
-body.setup span.title {
-    background: -moz-linear-gradient(black 18%, #CCCCCC) repeat scroll 0 0 black;
-    border-radius: 6px 6px 0 0;
-    color: white;
-    display: block;
-    padding-bottom: 8px;
-    text-align: center;
-    width: 610px;
-}
-body.setup span.prob {
-	color: red;
-}
-body.setup span.ok {
-	color: green;
-}
-body.setup div#Success {
-	max-width: 610px;
-	margin-right: auto;
-	margin-left: auto;
-	background: rgb(204,204,204);
-	border-radius: 6px;
-	padding-bottom: 5px;
-	box-shadow: 5px 5px 10px black;
-	text-align: center;
-}
-body.setup div#Success span.title {
-	background: -moz-linear-gradient(rgba(102,255,51,0.8) 18%, #CCCCCC);
-	color: black;
-}
-body.setup div#Success a {
-	text-decoration: underline;
-}
-html:lang(he) body.setup {
-	direction: rtl;
 }

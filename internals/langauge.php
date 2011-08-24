@@ -44,7 +44,7 @@ define('LANG', detect_lang());
 
 //Return translated string
 function trans($what) {
-	$location = 'locale/' . LANG . '.php';
+	$location = 'internals/locale/' . LANG . '.php';
 	if(file_exists($location))
 	{
 		include $location;

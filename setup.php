@@ -161,7 +161,8 @@ function form() {
 	<head>
 		<title><?=$title?></title>
 		<meta charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="gallery.css" />
+		<link rel="stylesheet" type="text/css" href="internals/style/gallery.css" />
+		<link rel="stylesheet" type="text/css" href="internals/style/setup.css" />
 	</head>
 	<body class="setup">
 		<?

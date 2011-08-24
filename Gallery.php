@@ -18,7 +18,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
-define('VERSION', "0.0.2-dev");
+define('VERSION', "0.0.3-dev");
 
 //Neatly handle settings file
 if ((@include_once("settings.php"))!= 'OK')
@@ -55,87 +55,8 @@ else
 	$full_url=$url.$basename;
 
 
-//Thumbnail generation
-if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
-	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['thumb']);
-	$pathinfo=pathinfo($path);
-	$dir=dirname($path);
-	$basename=$pathinfo['basename'];
-	$md5=md5_file($path);
-	$thumbdir="thumbs";
-	$percent = 0.2;
-	if (isset($_GET['scale'])) {
-		switch($_GET['scale']) {
-			case "medium":
-				$thumbdir="thumbs-med";
-				$percent=0.5;
-			break;
-			case "high":
-				$thumbdir="thumbs-high";
-				$percent=0.8;
-			break;
-		}
-	}
-	$thumbfile="$dir/.$thumbdir/$basename@md5=$md5";
-	$fs = stat($path);
-	$etag=sprintf('"thumb%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
-	$headers = apache_request_headers();
-	header("Etag: $etag");
-	if (preg_match("/(.*?).jpg/i", $path)) {
-		header('Content-type: image/jpeg');
-		$type="jpeg";
-	}
-	elseif (preg_match("/(.*?).png/i", $path))
-	{
-		header('Content-type: image/png');
-		$type="png";
-	}
-	if (!file_exists($dir."/.$thumbdir") && is_writable($dir."/.$thumbdir")) {
-		mkdir($dir."/.$thumbdir");
-	}
-	if (file_exists($dir."/.$thumbdir") && file_exists($thumbfile)) {
-		if (!checkEtag($etag, false)) {
-			readfile($thumbfile);
-		}
-	} else {
-		list($width, $height) = getimagesize($path);
-		$newwidth = $width * $percent;
-		$newheight = $height * $percent;
-		$thumb = imagecreatetruecolor($newwidth, $newheight);
-		$has_thumb;
-		imageinterlace($thumb, 1); //Progressive JPEG loads faster
-		imageantialias($thumb, true); //Antialiasing
-		if ($type=='jpeg')
-			$source = imagecreatefromjpeg($path);
-		elseif ($type=='png')
-			$source = imagecreatefrompng($path);
-		imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
-		imagedestroy($source);
-		if (is_writable($thumbfile)) {
-			if ($type=='jpeg')
-				imagejpeg($thumb,$thumbfile);
-			elseif ($type=='png')
-				imagepng($thumb,$thumbfile);	
-			imagedestroy($thumb);
-			$has_thumb=true;
-		} else {
-			$has_thumb=false;
-		}
-		if (!checkEtag($etag, false)) {
-			if ($has_thumb)
-				readfile($thumbfile);
-			else {
-				if ($type=='jpeg')
-					imagejpeg($thumb);
-				elseif ($type=='png')
-					imagepng($thumb);	
-				imagedestroy($thumb);
-			}
-		}
-	}
-	exit;
 //Exif data fetching
-} elseif (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
+if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['exif']);
 	$fs = stat($path);
 	if (preg_match("/(.*?).jpg/i", $path))
@@ -209,16 +130,7 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
 	header('Content-Type: text/html; charset=utf-8'); 
-	scan($_GET['ajaxDir']);	
-	$etag="galleryAjax".md5(ob_get_contents());
-	checkEtag($etag, true);
-	exit;
-//Fetch exif thumbnail
-} elseif (isset($_GET['exifThumb']) && strpos($_GET['exifThumb'],'..')===false) {
-	header("HTTP/1.1 200 OK");
-	header("Status: 200 OK");
-	header('Content-type: image/jpeg');
-	echo(exif_thumbnail($_GET['exifThumb']));
+	echo(scan($_GET['ajaxDir'], $pathinfo));	
 	$etag="galleryAjax".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
@@ -228,77 +140,9 @@ if (isset($_GET['thumb']) && strpos($_GET['thumb'],'..')===false) {
 		die("redirecting");
 	}
 }
-//Proccess directory
-function scan($dir) {
-	$pathinfo=pathinfo($_SERVER['SCRIPT_NAME']);
-	$url=SCRIPT_DIR_URL;
-	$basename=$pathinfo['basename'];
-	$full_url=$url.$basename;
-	if (isset($_GET['dir']) && $_GET['dir']!='.') { 
-		$parent=dirname($dir);
-		echo("<a href='$url$basename?dir=$parent'><div class='folder'><span>../<span></div></a><br>");	
-	}
-	if (isset($_GET['ajaxDir']) && $_GET['ajaxDir']!='.') {
-		$parent=dirname($dir);
-		echo("<a href='$url$basename' onclick=\"return changeHash('dir', '$parent', false)\"><div class='folder'><span>../</span></div></a><br>");	
-	}
-	echo("Directory: $dir<br>");
-	if (file_exists($dir."/metadata.xml")) {
-		?>
-		<div class="DirDesc">
-		<?
-			$metadata = simplexml_load_file($dir."/metadata.xml");
-			echo $metadata->{'folder-comment'};
-		?>
-		</div>
-		<?	
-	}
-	$filearray=array();
-	$i=0;
-	if ($handle = opendir($dir)) {
-		while (false !== ($file = readdir($handle))) {
-			$i++;
-			$filearray[$i]=$file;
-        	}
-		closedir($handle);
-		sort($filearray);
-		$y=0;
-		foreach($filearray as $file) {
-			if (is_dir($dir.'/'.$file) && $file!='.' && $file!='..' && substr($file,0,1)!='.' && $file!="internals") {
-				$url1=$_SERVER['REQUEST_URI'];
-				echo("<a href='$url$basename?dir=$dir/$file' onclick=\"return changeHash('dir', '$dir/$file', false)\"><div class='folder'><span>$file</span></div></a>");
-			} 
-			elseif ($file!='.' && $file!='..' && (preg_match("/(.*?).jpg/i", $file) || preg_match("/(.*?).png/i", $file) || preg_match("/(.*?).ogv/i", $file) || preg_match("/(.*?).webm/i", $file) || preg_match("/(.*?).oga/i", $file))) {
-				if ($dir=='.') {
-					$file_url=$url.$file;
-					$file_path=$file;
-				}
-				else
-				{
-					$file_url="$url$dir/$file";
-					$file_path="$dir/$file";
-				}
-				if (preg_match("/(.*?).jpg/i", $file)) {
-					echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?exifThumb=$file_path' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).png/i", $file)) {
-					echo("<div class='image' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$full_url?thumb=$file_path' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).webm/i", $file)) {
-					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-webm.svg' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).ogv/i", $file)) {
-					echo("<div class='image vid' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/video-ogv.svg' alt='$file' /></a></div>");
-				} elseif (preg_match("/(.*?).oga/i", $file)) {
-					echo("<div class='image aud' id='$y' onclick='ShowInfo(this, event);'><a href='$file_url'><img src='$url/internals/style/audio.svg' alt='$file' /></a></div>");
-				}				
-				$y++;
-			}
-		}
-	} else {
-		die('Configuration error');
-	}
-}
 ?>
 <!doctype html>
-<html lang='<?=LANG?>'>
+<html lang='<?=LANG?>' manifest='internals/appcache.php'>
 	<head>
 		<title><?=TITLE?></title>
 		<meta charset="utf-8">
@@ -311,9 +155,11 @@ function scan($dir) {
 		<?
 			}
 		?>
+		<script type="text/javascript" src="internals/js/cache.js"></script>
 		<script type="text/javascript" src="internals/js/gallery.js"></script>
 		<script type="text/javascript" src="internals/js/fft.js"></script>
 		<script type="text/javascript" src="internals/js/throbber.js"></script>
+		<script type="text/javascript" src="internals/js/dirInfo.js"></script>
 		<script type="text/javascript" src="internals/js/classList.js"></script>
 	</head>
 	<body onload="init('<?=$full_url ?>');">
@@ -321,19 +167,18 @@ function scan($dir) {
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>
-		<div id="status"></div>
 		<div id="ajaxThrobContainer"></div>
 		<span id="showsettings" onclick="toggleSettingsDialog();"><? echo trans("Settings"); ?></span>
 		<div id="galleryContainer">
 			<?
 				if (!isset($_GET['dir'])) { 
-					scan('.');
+					echo(scan('.', $pathinfo));
 					?>
 						<script type="text/javascript">rootDisableAjax=true;</script>
 					<?
 				}
 				elseif(strpos($_GET['dir'],'..')===false) {
-					scan($_GET['dir']);				
+					echo(scan($_GET['dir'], $pathinfo));				
 				} else {
 					echo trans("No");				
 				}
@@ -362,11 +207,15 @@ function scan($dir) {
 			<div class="arrow-down"></div>
 		</div>
 		<span class="btnK" title="<? echo trans("Keyboard shortcuts") ?>" onclick="toggleKeyboardList()">⌨</span>
+		<div id="net_status">
+			<span id="status"></span>
+			<span id="cache_status"></span>
+		</div>
 		<footer style="direction:ltr">
 			Using elad-gallery <?=VERSION?> by <a href="http://www.doom.co.il">Elad Alfassa</a><br>
 			GPLv3+ licensed source code  is <a href="https://github.com/elad661/elad-gallery">avilable in github</a>. <br>
 			Embeds DejaVu Sans font by <a href="http://dejavu-fonts.org">DejaVu fonts</a><br>
-			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 4</a> and above.
+			Best viewed in <a href="http://mozilla.com">Mozilla Firefox 5</a> and above.
 		</footer>
 	</body>
 </html>
