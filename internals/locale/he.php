@@ -42,15 +42,6 @@ $lang = array (
 	'Gallery page title' => 'כותרת דף הגלריה',
 	'URL, relative path or file name for your custom style sheet. leave empty if you don\'t have such stylesheet.' => 'כתובת URL, נתיב יחסי או שם קובץ לגיליון הסגנונות המותאם אישית שלך. אם אין לך כזה, השאר שדה זה ריק.',
 	'Create .htaccess file' => 'צור קובץ .htaccess',
-	'continue' => 'המשך',
-	'User name' => 'שם משתמש',
-	'Password' => 'ססמה',
-	'Profile' => 'פרופיל',
-	'Name' => 'שם',
-	'Technical stuff' => 'דברים טכניים',
-	'Setup' => 'התקנה',
-	'Login information' => 'מידע התחברות',
-	'Setup completed successfuly' => 'ההתקנה הושלמה בהצלחה'
-	
+	'continue' => 'המשך'
 );
 ?>
