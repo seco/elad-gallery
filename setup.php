@@ -69,7 +69,7 @@ function check() {
 	else
 		$msg.=" <span class='prob'>". trans("Some important files are missing") ."</span>";
 	$msg.="</li>";
-	$msg.="</div>";
+	$msg.="</ul></div>";
 	return $msg;
 }
 function setup() {
@@ -112,8 +112,18 @@ function setup() {
 		$settings.='return(\'OK\');';
 		$settings.='?>';
 		file_put_contents("settings.php", $settings);
+		$xmlstr = "<?xml version='1.0' standalone='yes'?><users></users>";
+		$xml = new SimpleXMLElement($xmlstr);
+		$user=$xml->addChild('user');
+		$user->addAttribute('role','admin');
+		$user->addChild('uname', $_POST['username']);
+		$user->addChild('password', hash('sha512', $_POST['password']));
+		$user->addChild('name', $_POST['name']);
+		file_put_contents('users.xml', $xml->asXML());
 	}
-	echo('<div id=\'Success\'><span class=\'title\'>' .trans("Setup"). '</span>' . trans("Setup completed successfuly") . '<br/><a href=' .$_POST['url']. '>' .trans("Continue").'</a></div>');
+	echo('<div id=\'Success\'><span class=\'title\'>' .trans("Setup"). '</span>' .
+	trans("Setup completed successfuly") .
+	 '<br/><a href=' .$_POST['url']. '>' .trans("Continue").'</a></div>');
 }
 function form() {
 ?>
@@ -121,6 +131,10 @@ function form() {
 			<span class="title"><?=trans("Image gallery - initial setup");?></span>
 			<?=check()?>
 			<table>
+				<tr>
+					<th><?=trans("Technical stuff")?></th>
+					<td></td>
+				</tr>
 				<tr>
 					<td>
 						<?=trans("Full URL to the directory where Gallery.php is")?>
@@ -149,6 +163,27 @@ function form() {
 					<td>
 						<input type="checkbox" id="htaccess" name="htaccess" value="Create .htaccess file" <? $status=check_status(); if (!$status['htaccess_writable']) echo('disabled'); else echo "checked"; ?>/><label for="htaccess"><?=trans("Create .htaccess file")?></label>
 					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th><?=trans("Login information")?></th>
+					<td></td>
+				</tr>
+				<tr>
+					<td><?=trans("User name")?></td>
+					<td><input id="username" name="username" type="text" required /></td>
+				</tr>
+				<tr>
+					<td><?=trans("Password")?></td>
+					<td><input id="password" name="password" type="password" required /></td>
+				</tr>
+				<tr>
+					<th><?=trans("Profile")?></th>
+					<td></td>
+				</tr>
+				<tr>
+					<td><?=trans("Name")?></td>
+					<td><input id="name" name="name" type="text" required /></td>
 				</tr>
 			</table>
 			<input type="submit" value='<?=trans("continue");?>' <? $status=check_status(); if (!($status['version']&&$status['settings_writable']&&$status['files'])) { echo('disabled'); }?>>

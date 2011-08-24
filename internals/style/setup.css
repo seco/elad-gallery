@@ -36,12 +36,12 @@ body.setup form table {
 	padding-left: 5px;
 	display: block;
 }
-body.setup input[type="text"], body.setup input[type="url"] {
+body.setup input[type="text"], body.setup input[type="url"],body.setup input[type="password"] {
 	border-radius: 6px;
 	border: 1px black solid;
 	-moz-transition: 1s all;
 }
-body.setup input[type="text"]:focus:valid, body.setup input[type="url"]:focus:valid {
+body.setup input[type="text"]:focus:valid, body.setup input[type="url"]:focus:valid, body.setup input[type="password"]:focus:valid {
 	box-shadow: 1px 1px 3px black;
 	-moz-transition: 1s all;
 }
