@@ -29,24 +29,24 @@ include("functions.php");
 ini_set('memory_limit', '64M');
 
 if (isset($_GET['file']) && strpos($_GET['file'],'..')===false) {
-	$args['path']=str_replace(SCRIPT_DIR_URL, '', $_GET['file']);
-	if (!file_exists($args['path']) && file_exists("../$args[path]"))
-		$args['path']="../$args[path]";
-	$args['pathinfo']=pathinfo($args['path']);
-	$args['dir']=dirname($args['path']);
-	$args['basename']=$args['pathinfo']['basename'];
-	$args['md5']=md5_file($args['path']);
+	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['file']);
+	if (!file_exists($path) && file_exists("../$path"))
+		$path="../$path";
 	if(!isset($_GET['tryExif']))
-		thumbnail($args);
+		thumbnail($path);
 	else
-		exif_thumb($args);
+		exif_thumb($path);
 }
-function thumbnail($args) {
-	if (preg_match("/(.*?).jpg/i", $args['path'])) {		
+function thumbnail($path) {
+	$pathinfo=pathinfo($path);
+	$dir=dirname($path);
+	$basename=$pathinfo['basename'];
+	$md5=md5_file($path);
+	if (preg_match("/(.*?).jpg/i", $path)) {		
 		header('Content-type: image/jpeg');
 		$type="jpeg";
 	}
-	elseif (preg_match("/(.*?).png/i", $args['path']))
+	elseif (preg_match("/(.*?).png/i", $path))
 	{
 		header('Content-type: image/png');
 		$type="png";
@@ -65,20 +65,19 @@ function thumbnail($args) {
 			break;
 		}
 	}
-	$thumbfile="$args[dir]/.$thumbdir/$args[basename]@md5=$args[md5]";
-	$fs = stat($args['path']);
-	$etag=sprintf('"thumb%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
+	$thumbfile="$dir/.$thumbdir/$basename@md5=$md5";
+	$etag="thumb".$percent.$md5;
 	$headers = apache_request_headers();
 	header("Etag: $etag");
-	if (!file_exists($args['dir']."/.$thumbdir") && is_writable($args['dir']."/.$thumbdir")) {
-		mkdir($args['dir']."/.$thumbdir");
+	if (!file_exists($dir."/.$thumbdir") && is_writable($dir."/.$thumbdir")) {
+		mkdir($dir."/.$thumbdir");
 	}
-	if (file_exists($args['dir']."/.$thumbdir") && file_exists($thumbfile)) {
+	if (file_exists($dir."/.$thumbdir") && file_exists($thumbfile)) {
 		if (!checkEtag($etag, false)) {
 			readfile($thumbfile);
 		}
 	} else {
-		list($width, $height) = getimagesize($args['path']);
+		list($width, $height) = getimagesize($path);
 		$newwidth = $width * $percent;
 		$newheight = $height * $percent;
 		$thumb = imagecreatetruecolor($newwidth, $newheight);
@@ -86,9 +85,9 @@ function thumbnail($args) {
 		imageinterlace($thumb, 1); //Progressive JPEG loads faster
 		imageantialias($thumb, true); //Antialiasing
 		if ($type=='jpeg')
-			$source = imagecreatefromjpeg($args['path']);
+			$source = imagecreatefromjpeg($path);
 		elseif ($type=='png')
-			$source = imagecreatefrompng($args['path']);
+			$source = imagecreatefrompng($path);
 		imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 		imagedestroy($source);
 		if (is_writable($thumbfile)) {
@@ -115,10 +114,10 @@ function thumbnail($args) {
 	}
 	exit;
 }
-function exif_thumb($args) {
-	$thumb=exif_thumbnail($args['path']);
+function exif_thumb($path) {
+	$thumb=exif_thumbnail($path);
 	if ($thumb===false) {
-		thumbnail($args);
+		thumbnail($path);
 		exit;
 	}
 	ob_start();
