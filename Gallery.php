@@ -129,13 +129,15 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 } elseif (isset($_GET['ajaxDir']) && strpos($_GET['ajaxDir'],'..')===false) {
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
-	header('Content-Type: text/html; charset=utf-8'); 
+	header('Content-Type: text/html; charset=utf-8');
 	echo(scan($_GET['ajaxDir'], $pathinfo));	
 	$etag="galleryAjax".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
 } elseif (!isset($_GET['dir'])) { 
 	if ("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']!=$full_url) {
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Status: 301 Moved Permanently");
 		header("Location: $full_url");
 		die("redirecting");
 	}
