@@ -36,13 +36,13 @@ if (isset($_GET['file']) && strpos($_GET['file'],'..')===false) {
 	$args['dir']=dirname($args['path']);
 	$args['basename']=$args['pathinfo']['basename'];
 	$args['md5']=md5_file($args['path']);
-	thumbnail($args);
+	if(!isset($_GET['tryExif']))
+		thumbnail($args);
+	else
+		exif_thumb($args);
 }
 function thumbnail($args) {
-	if (preg_match("/(.*?).jpg/i", $args['path'])) {
-		if (isset($_GET['scale']) && $_GET['scale']=='tiny' && !isset($args['no-exif'])) {
-			exif_thumb($args);
-		}		
+	if (preg_match("/(.*?).jpg/i", $args['path'])) {		
 		header('Content-type: image/jpeg');
 		$type="jpeg";
 	}
@@ -116,11 +116,16 @@ function thumbnail($args) {
 	exit;
 }
 function exif_thumb($args) {
+	$thumb=exif_thumbnail($args['path']);
+	if ($thumb===false) {
+		thumbnail($args);
+		exit;
+	}
 	ob_start();
+	echo $thumb;
 	header("HTTP/1.1 200 OK");
 	header("Status: 200 OK");
 	header('Content-type: image/jpeg');
-	echo(exif_thumbnail($args['path']));
 	$etag="exif_thumb".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
