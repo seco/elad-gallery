@@ -664,3 +664,18 @@ div#info audio {
 	top: 135px;
 	position: absolute;
 }
+span#status {
+	color: green;
+	-moz-transition: all 1s;
+	-o-transition: all 1s;
+	-webkit-transition: all 1s;
+}
+span#status.offline {
+	color: red;
+	-moz-transition: all 1s;
+	-o-transition: all 1s;
+	-webkit-transition: all 1s;
+}
+div#net_status span{
+	display: block;
+}
