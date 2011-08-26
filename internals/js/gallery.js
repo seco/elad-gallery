@@ -190,7 +190,7 @@ function ContentTransitionComplete(e) {
 		var info=content.parentNode;
 		var newcontent=content.parentNode.lastChild;
 		newcontent.style.display="block";
-		if (content.firstChild.className=="showdata" || newcontent.children[2].offsetWidth+newcontent.children[1].offsetWidth>newcontent.offsetWidth) {
+		if (content.firstChild.className=="showdata") {
 			newcontent.firstChild.onclick();
 		}
 		if (newcontent.firstChild.className=="hidedata" && newcontent.children[2].className=="big") {
