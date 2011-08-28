@@ -190,7 +190,7 @@ function ContentTransitionComplete(e) {
 		var info=content.parentNode;
 		var newcontent=content.parentNode.lastChild;
 		newcontent.style.display="block";
-		if (content.firstChild.className=="showdata" || newcontent.children[2].offsetWidth+newcontent.children[1].offsetWidth>newcontent.offsetWidth) {
+		if (content.firstChild.className=="showdata") {
 			newcontent.firstChild.onclick();
 		}
 		if (newcontent.firstChild.className=="hidedata" && newcontent.children[2].className=="big") {
@@ -418,26 +418,26 @@ function switchHQ(content,element, thumb) {
 		}
 		var link=content.children[2];
 		thumb.src=element.firstChild.href;
-		/*var zoomIn=document.createElement('span');
+		var zoomIn=document.createElement('span');
 		zoomIn.className="zoom";
 		zoomIn.id="zoomIn";
 		zoomIn.innerHTML="+";
 		zoomIn.onclick=function() {
-			thumbScale=thumbScale+0.5;
-			thumbUpdate(thumb, 0, 0);
+			var newScale=thumbScale+0.5;
+			thumbUpdateTransform(thumbOriginX, thumbOriginY, newScale, thumb);
 		};
 		var zoomOut=document.createElement('span');
 		zoomOut.className="zoom";
 		zoomOut.id="zoomOut";
 		zoomOut.innerHTML="-";
 		zoomOut.onclick=function() {
-			thumbScale=thumbScale-0.5;
-			thumbUpdate(thumb, 0, 0);
-		};*/
+			var newScale=thumbScale-0.5;
+			thumbUpdateTransform(thumbOriginX, thumbOriginY, newScale, thumb);
+		};
 		document.addEventListener("keydown", thumbZoomHandler, false);
 		thumb.addEventListener("mousemove", thumbZoomHandler, false);
-		/*tools.appendChild(zoomIn); //FIXME
-		tools.appendChild(zoomOut);*/
+		tools.appendChild(zoomIn);
+		tools.appendChild(zoomOut);
 }
 function thumbZoomHandler(e) {
 	var localThmubScale=thumbScale;
@@ -475,32 +475,35 @@ function thumbZoomHandler(e) {
 		if (e.offsetX) { localOriginX = e.offsetX; localOriginY = e.offsetY; }
 		else if (e.layerX) { localOriginX = e.layerX; localOriginY = e.layerY }
 	}
-	if (thumb.style.MozTransform!=undefined) {
-		if (PrevThumbScale!=localThmubScale) {
-			thumb.style.MozTransform="scale("+localThmubScale+")";
-			thumbScale=localThmubScale;
+	thumbUpdateTransform(localOriginX, localOriginY, localThmubScale, thumb);
+}
+function thumbUpdateTransform(newOriginX, newOriginY, newScale, thumb) {
+	var prevOriginX=thumbOriginX, prevOriginY=thumbOriginY;
+	if (thumb.style.MozTransform!=undefined || thumb.style.webkitTransform!=undefined) {
+		if (thumbScale!=newScale) {
+			if (thumb.style.MozTransform!=undefined) {
+				thumb.style.MozTransform="scale("+newScale+")";
+			} else if (thumb.style.webkitTransform!=undefined) {
+				thumb.style.webkitTransform="scale("+newScale+")";
+			}
+			thumbScale=newScale;
 		}
-		if ((prevOriginX!=localOriginX || prevOriginY!=localOriginY) && localThmubScale>1) {
-			thumb.style.MozTransformOrigin=localOriginX+"px "+localOriginY+"px ";
-			thumbOriginY=localOriginY;
-			thumbOriginX=localOriginX;
+		if ((prevOriginX!=newOriginX || prevOriginY!=newOriginY) && thumbScale>1) {
+			if (thumb.style.MozTransform!=undefined) {
+				thumb.style.MozTransformOrigin=newOriginX+"px "+newOriginY+"px ";
+			} else if (thumb.style.webkitTransform!=undefined) {
+				thumb.style.webkitTransformOrigin=newOriginX+"px "+newOriginY+"px ";
+			}
+			thumbOriginY=newOriginY;
+			thumbOriginX=newOriginX;
 		}
-	} else if (thumb.style.webkitTransform!=undefined) {
-		if (PrevThumbScale!=localThmubScale) {
-			thumb.style.webkitTransform="scale("+localThmubScale+")";
-			thumbScale=localThmubScale;
-		}
-		if ((prevOriginX!=localOriginX || prevOriginY!=localOriginY) && localThmubScale>1) {
-			thumb.style.webkitTransformOrigin=localOriginX+"px "+localOriginY+"px ";
-			thumbOriginY=localOriginY;
-			thumbOriginX=localOriginX;
-		}
-		} else {
-			thumb.setAttribute("style", "-o-transform: scale("+localThmubScale+");-o-transform-origin: "+originX+"px "+originY+"px;");
-			thumbScale=localThmubScale;
-			thumbOriginY=localOriginY;
-			thumbOriginX=localOriginX;
-		}
+	} else {
+		thumb.setAttribute("style", "-o-transform: scale("+newScale+");-o-transform-origin: "+newOriginX+"px "+newOriginY+"px;");
+		thumbScale=newScale;
+		thumbOriginY=newOriginY;
+		thumbOriginX=newOriginX;
+	}
+
 }
 /* Slideshow */
 function startSlideShow(element) {

@@ -27,27 +27,31 @@ if (isBuggyIe())
 
 header('Content-Type: text/cache-manifest');
 header('Cache-Control: no-cache');
-$hash_sum='';
 function process_dir($dir) {
-$hash_sum='';
+	$hash_sum='';
+	if ($dir=='./')
+		$Realdir='';
+	else
+		$Realdir=$dir;
 	if ($handle = opendir($dir)) {
 		while (false !== ($file = readdir($handle))) {
-			if (is_file($dir.'/'.$file) && is_readable($dir.'/'.$file) && !preg_match("/(.*?).php/i", $file)) {
-				echo "$dir/$file\n";
-				$hash_sum.=md5($dir.'/'.$file);
-			} elseif (is_dir($dir.'/'.$file) && $file != "." && $file != "..") {
-				process_dir($dir."/".$file);
+			if (is_file($Realdir.$file) && is_readable($Realdir.$file) && !preg_match("/(.*?).php/i", $file)) {
+				echo "$Realdir$file\n";
+				$hash_sum.=md5_file($Realdir.$file);
+			} elseif (is_dir($Realdir.$file) && $file != "." && $file != "..") {
+				$hash_sum.=process_dir($Realdir.$file."/");
 			}
 		}
 		closedir($handle);
 	}
 	else {
+		closedir($handle);
 		die("error");	
 	}
 return $hash_sum;
 }
 echo "CACHE MANIFEST\n";
-$hash_sum=process_dir('.');
+$hash_sum=process_dir('./');
 echo "\nNETWORK:\n";
 echo '*' . "\n";
 echo '../*' . "\n";
