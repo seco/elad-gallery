@@ -19,9 +19,17 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
 //Include functions
-include("functions.php");
+if (!defined("FUNCTIONS_OK"))
+	include("functions.php");
+
 function auth($name, $password) {
-	$xml=simplexml_load_file("../users.xml");
+	$xml='';
+	if (file_exists("../users.xml"))
+		$xml=simplexml_load_file("../users.xml");
+	else if (file_exists("users.xml"))
+		$xml=simplexml_load_file("users.xml");
+	else
+		return false;
 	$user='';
 	foreach ($xml->user as $possibe_user) {
 		if ((string) $possibe_user->uname==$name) {
@@ -34,42 +42,91 @@ function auth($name, $password) {
 	}
 	return false;
 }
-
-//Starting compressionable output buffer
-if (isBuggyIe())
-		ob_start(); //we need OB for the etag to work.
-	else
-		ob_start("ob_gzhandler");
-
-ini_set('memory_limit', '64M');
-header('Content-Type: text/html; charset=utf-8');  
-
-if (!isset($_POST['username']) && !isset($_POST['password']) && !defined("LOGIN_FUNCTIONS_ONLY")) {
-
-?>
-<!doctype html>
-<html>
-	<head>
-		<title>Login</title>
-		<meta charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="style/login.css" />
-	</head>
-	<body>
-		<form method="post" action="" id="login">
-			<input name="username" type="text" value="username" /><!--FIXME: Make it look right-->
-			<input name="password" type="password" value="password" />
-			<input type="submit" />
-		</form>
-	</body>
-</html>
-<?php
-} elseif (isset($_POST['username']) && isset($_POST['password'])) {
-	if(auth($_POST['username'], $_POST['password']))
-		echo "yay";
-	else
-		echo ":(";
-
+function start_session() {
+	if (!isset($_SESSION['session'])) {
+		session_start();
+		$_SESSION['session']=true;
+	}
+	$name="";
+	$password="";
+	if (isset($_POST['username']) && isset($_POST['password'])) {
+		$name=$_POST['username'];
+		$password=$_POST['password'];
+	} else if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
+		$name=$_SESSION['username'];
+		$password=$_SESSION['password'];
+	} else {
+		return false;	
+	}
+	if (auth($name, $password)) {
+		$_SESSION['username']=$name;
+		$_SESSION['password']=$password;
+		$_SESSION['login_ip']=$_SERVER['REMOTE_ADDR'];
+		return true;
+	}
+	return false;
 }
-$etag=md5(ob_get_contents()); 
-checkEtag($etag, true);
+if (isset($_GET['action']) && $_GET['action']="logout") {
+	session_destroy();
+	if ((@include_once("../settings.php"))!= 'OK')
+	 die("Please read README for installation instructions. (settings file missing)");
+	if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
+	 die("Error: Missing mandatory settings options. Please see README for more information");
+	$url=SCRIPT_DIR_URL;
+	if (IS_DIR_INDEX)
+		$full_url=$url;
+	else
+		$full_url=$url."/Gallery.php";
+	header("Location: $full_url");
+	die("Redirecting...");
+}
+if (!defined("LOGIN_FUNCTIONS_ONLY")) {
+	$session_retval=start_session();
+	if (!$session_retval) {
+
+	//Starting compressionable output buffer
+	if (isBuggyIe())
+			ob_start(); //we need OB for the etag to work.
+		else
+			ob_start("ob_gzhandler");
+
+	ini_set('memory_limit', '64M');
+	header('Content-Type: text/html; charset=utf-8');  
+
+
+
+	?>
+	<!doctype html>
+	<html>
+		<head>
+			<title>Login</title>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="style/login.css" />
+		</head>
+		<body>
+			<form method="post" action="" id="login">
+				<input name="username" type="text" value="username" /><!--FIXME: Make it look right-->
+				<input name="password" type="password" value="password" />
+				<input type="submit" />
+			</form>
+		</body>
+	</html>
+	<?php
+
+	$etag = md5(ob_get_contents()); 
+	checkEtag($etag, true);
+	} else if ($session_retval) {
+		if ((@include_once("../settings.php"))!= 'OK')
+		 die("Please read README for installation instructions. (settings file missing)");
+		if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
+		 die("Error: Missing mandatory settings options. Please see README for more information");
+		$url=SCRIPT_DIR_URL;
+		if (IS_DIR_INDEX)
+			$full_url=$url;
+		else
+			$full_url=$url."/Gallery.php";
+		header("Location: $full_url");
+		echo("Redirecting...");
+	}
+}
 ?>

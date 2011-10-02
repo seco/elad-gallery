@@ -36,12 +36,17 @@ if (file_exists("setup.php") && strpos(world_premissions("setup.php"), "r")!==FA
 //Include l10n
 include("internals/langauge.php");
 
+//Include login functions
+define('LOGIN_FUNCTIONS_ONLY', true);
+include("internals/login.php");
+$is_logged_in=start_session();
+
 
 //Starting compressionable output buffer
-if (isBuggyIe())
+//if (isBuggyIe())
 		ob_start(); //we need OB for the etag to work.
-	else
-		ob_start("ob_gzhandler");
+//	else
+//		ob_start("ob_gzhandler");
 ini_set('memory_limit', '64M');
 header('Content-Type: text/html; charset=utf-8');  
 
@@ -164,8 +169,13 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 		<script type="text/javascript" src="internals/js/dirInfo.js"></script>
 		<script type="text/javascript" src="internals/js/classList.js"></script>
 	</head>
-	<body onload="init('<?=$full_url ?>');">
+	<body onload="init('<?=$full_url ?>');">		
 		<?
+		if($is_logged_in==true) {
+			echo("welcome, ".$_SESSION['username']);		
+		} else {
+			echo("<a href='internals/login.php'>login</a>");
+		}
 		/* Load custom header from header.html */
 		echo file_get_contents("header.html");
 		?>

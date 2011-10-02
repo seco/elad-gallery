@@ -18,7 +18,7 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
-
+define("FUNCTIONS_OK", true);
 function world_premissions($file) {
 $perms = fileperms($file);
 $info = (($perms & 0x0004) ? 'r' : '-');
