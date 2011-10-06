@@ -4,15 +4,14 @@
  * including overriding other defaults.
 */
 
-/* Default:
-config = {
-	useAnimations: true,
-	useAjax: true;
-  };
-
+/* Avilable settings:
+	useAnimations: [true|false], disables or enables animations in the information window
+	useAjax: [true|false], disables or enables AJAX for directory navigation
+	showDirInfoTooltip: [true|false], disables or enables the directory information tooltip.
 */
 
 config = {
 	useAnimations: true,
-	useAjax: true
+	useAjax: true,
+	showDirInfoTooltip: true
   };

@@ -17,8 +17,9 @@ elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes
 	You should have received a copy of the GNU General Public License
 	along with elad-gallery. If not, see <http://www.gnu.org/licenses/>.
 */
+var local_config=config;
 function showDirInfo(element, event) {
-	if (element==null || !loaded || element==undefined)
+	if (element==null || !loaded || element==undefined || local_config.showDirInfoTooltip == false)
 		return false;
 	var dir_info=document.querySelector("div.dir_info[data-for='"+element.id+"']");
 	if (!dir_info.classList.contains("visible")) {
