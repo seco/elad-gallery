@@ -162,6 +162,7 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 		<?
 			}
 		?>
+		<script type="text/javascript" src="internals/js/config.js"></script>
 		<script type="text/javascript" src="internals/js/cache.js"></script>
 		<script type="text/javascript" src="internals/js/gallery.js"></script>
 		<script type="text/javascript" src="internals/js/fft.js"></script>

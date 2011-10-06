@@ -32,6 +32,7 @@ var throbContainer, throbObj;
 var thumbOriginX=0, thumbOriginY=0;
 var slideshowTimerID;
 var fft_canvas, fft_aud;
+var local_config=config;
 function ShowInfo(element, event) {
 	if (event) {
 		event.preventDefault();	
@@ -93,17 +94,19 @@ function ShowInfo(element, event) {
 		var image=imagesList[me];
 		imagesList=null;
 		content.id="oldcontent";
-		if (direction=="next") {
-			content.className="nextcontent";
-			newcontent.className="transitionN";
-			if (me<len-1)
-				next.classList.add("trans");
-		}else {
-			content.className="prevcontent";
-			newcontent.className="transition";
-			//content.children[2].setAttribute("style", "max-width: 23%; overflow:visible;");
-			if (me>0)
-				prev.classList.add("trans");
+		if (local_config.useAnimations==true) {
+			if (direction=="next") {
+				content.className="nextcontent";
+				newcontent.className="transitionN";
+				if (me<len-1)
+					next.classList.add("trans");
+			}else {
+				content.className="prevcontent";
+				newcontent.className="transition";
+				//content.children[2].setAttribute("style", "max-width: 23%; overflow:visible;");
+				if (me>0)
+					prev.classList.add("trans");
+			}
 		}
 		newcontent.id='content';
 		newcontent.style.display="none";
@@ -112,25 +115,31 @@ function ShowInfo(element, event) {
 		fillContent(image, newcontent);
 		//newcontent.children[2].setAttribute("style", "max-height: 33%; max-width: 40%; overflow:visible;");
 		//newcontent.firstChild.style.display="none";
-		if (direction=="next")
-			newcontent.children[1].setAttribute("style", "margin-right: -"+newcontent.children[1].offsetWidth+"px");	
-		var test=content.addEventListener("transitionend", ContentTransitionComplete, false);
-		content.addEventListener("webkitTransitionEnd", ContentTransitionComplete, false);
-		content.addEventListener("oTransitionEnd",  ContentTransitionComplete, false);
-		var testA=newcontent.addEventListener("transitionend", newContentTransitionComplete, false);
-		newcontent.addEventListener("webkitTransitionEnd",newContentTransitionComplete, false);
-		newcontent.addEventListener("oTransitionEnd",newContentTransitionComplete, false);
-		var a=0;
-		func=function() {
-			if (transition==true && a==2) {
-				ContentTransitionComplete(null);
-				newContentTransitionComplete(null);
-			} else {
-				a++;
-				transitionKillTimeout=setTimeout("func()", 1200);
-			}
-		};
-		transitionKillTimeout=setTimeout("func()", 1200);
+		if (local_config.useAnimations==false) {
+			ContentTransitionComplete(null);
+			newContentTransitionComplete(null);
+		}
+		else {
+			if (direction=="next")
+				newcontent.children[1].setAttribute("style", "margin-right: -"+newcontent.children[1].offsetWidth+"px");	
+			var test=content.addEventListener("transitionend", ContentTransitionComplete, false);
+			content.addEventListener("webkitTransitionEnd", ContentTransitionComplete, false);
+			content.addEventListener("oTransitionEnd",  ContentTransitionComplete, false);
+			var testA=newcontent.addEventListener("transitionend", newContentTransitionComplete, false);
+			newcontent.addEventListener("webkitTransitionEnd",newContentTransitionComplete, false);
+			newcontent.addEventListener("oTransitionEnd",newContentTransitionComplete, false);
+			var a=0;
+			func=function() {
+				if (transition==true && a==2) {
+					ContentTransitionComplete(null);
+					newContentTransitionComplete(null);
+				} else {
+					a++;
+					transitionKillTimeout=setTimeout("func()", 1200);
+				}
+			};
+			transitionKillTimeout=setTimeout("func()", 1200);
+		}
 		changeHash("img", image.id, true);
 	};
 	var next=document.createElement("span");
@@ -276,7 +285,10 @@ function fillContent(element, content) {
 			data.addEventListener("transitionend", func, false);
 			data.addEventListener("webkitTransitionEnd", func, false);
 			data.addEventListener("oTransitionEnd",  func, false);
-			showdataKillT=setTimeout("func()", 1200);
+			if (local_config.useAnimations==false)
+				func();
+			else
+				showdataKillT=setTimeout("func()", 1200);
 
 		}
 		else {
@@ -727,6 +739,8 @@ function HashParmeterParser() {
 	return returnarray;
 }
 function changeHash(param, value, inhibit) {
+	if (local_config.useAjax==false)
+		return true;
 	inhibitHashChange=inhibit;
 	var hashArray=HashParmeterParser();
 	if (param=="img" && document.getElementById("hashimg").checked==true) {
