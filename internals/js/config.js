@@ -14,5 +14,5 @@ config = {
 
 config = {
 	useAnimations: true,
-	useAjax: true;
+	useAjax: true
   };
