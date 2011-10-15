@@ -82,7 +82,7 @@ function dirInfo($parent, $dir) {
 	if ($handle = opendir($parent."/".$dir)) {
 		$i=0;
 		while (false !== ($file = readdir($handle))) {
-			if ($file!='.' && $file!='..') {
+			if ($file!='.' && $file!='..' && $file!="metadata.xml" && $file!=".thumbs") {
 				$i++;
 				$stat=stat($parent."/".$dir."/".$file);
 				$total_size+=$stat['size'];
