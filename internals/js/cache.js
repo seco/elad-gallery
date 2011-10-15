@@ -55,8 +55,10 @@ function offline() {
 	status=document.getElementById('status');
 	status.classList.add('offline');
 	status.innerHTML="Offline";
+	handleCacheEvent();
 }
 function online() {
+	handleCacheEvent();
 	status=document.getElementById('status');
 	status.classList.remove('offline');
 	status.innerHTML="Online";
@@ -71,7 +73,7 @@ function handleCacheEvent() {
 		break;
 
 		case appCache.IDLE: // IDLE == 1
-			status.innerHTML='Cache: OK';
+			status.innerHTML='Cache: OK'; 
 		break;
 
 		case appCache.CHECKING: // CHECKING == 2
@@ -81,7 +83,8 @@ function handleCacheEvent() {
 		break;
 		case appCache.DOWNLOADING: // DOWNLOADING == 3
 			status.innerHTML='Cache: Downloading';
-			window.setTimeout(handleCacheErr(), 1000);
+			window.setTimeout(handleCacheErr(), 500);
+			window.setTimeout(handleCacheEvent(), 500);
 		break;
 
 		case appCache.UPDATEREADY:  // UPDATEREADY == 4
@@ -98,9 +101,10 @@ function handleCacheEvent() {
 	}
 }
 function handleCacheErr() {
-	if (retryCount<10 && navigator.onLine) {
+	status=document.getElementById('cache_status');
+	if (retryCount<5 && navigator.onLine) {
 		handleCacheEvent();
-		window.setTimeout(updateCache, 1000);
+		window.setTimeout(updateCache, 5000);
 		retryCount++;
 	} else {
 		status.innerHTML='';
