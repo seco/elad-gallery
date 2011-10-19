@@ -1,0 +1,8 @@
+Release 0.0.3
+=============
+- Style tweaks
+- Added a configuration file to configure client-side stuff like tooltips, ajax and animations.
+- Implement appcache support (broken, disabled by default)
+- Preformance improvements
+- More code was splitted out from Gallery.php
+- Minor bug fixes
