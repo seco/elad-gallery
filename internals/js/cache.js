@@ -83,8 +83,7 @@ function handleCacheEvent() {
 		break;
 		case appCache.DOWNLOADING: // DOWNLOADING == 3
 			status.innerHTML='Cache: Downloading';
-			window.setTimeout(handleCacheErr(), 500);
-			window.setTimeout(handleCacheEvent(), 500);
+			window.setTimeout(handleCacheEvent(), 5000);
 		break;
 
 		case appCache.UPDATEREADY:  // UPDATEREADY == 4
