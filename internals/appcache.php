@@ -50,13 +50,37 @@ function process_dir($dir) {
 	}
 return $hash_sum;
 }
+/* This function returns a md5 hash of all file names in a specified directory.
+ * I do this to make sure Gallery.php is re-cached in case files in the gallery root were added or removed */
+function hash_filelist($dir) {
+	$hash_sum='';
+	if ($dir=='./')
+		$Realdir='';
+	else
+		$Realdir=$dir;
+	if ($handle = opendir($dir)) {
+		while (false !== ($file = readdir($handle))) {
+			if (is_file($Realdir.$file) && is_readable($Realdir.$file)) {
+				$hash_sum.=md5($Realdir.$file);
+			} elseif (is_dir($Realdir.$file) && is_readable($Realdir.$file) && $file != "." && $file != "..") {
+				$hash_sum.=hash_filelist($Realdir.$file."/");
+			}
+		}
+		closedir($handle);
+	}
+	else {
+		closedir($handle);
+		die("error");	
+	}
+return $hash_sum;
+}
 echo "CACHE MANIFEST\n";
 $hash_sum=process_dir('./');
+$hash_sum.=hash_filelist('../');
 echo "\nNETWORK:\n";
-echo '*' . "\n";
+echo '*php' . "\n"; 
 echo '../*' . "\n";
-echo '*/*' . "\n";
-
+$hash_sum.=md5(ob_get_contents());
 echo("\n#Fingerprint: ".md5($hash_sum)."\n");
 
 $etag=md5(ob_get_contents()); 
