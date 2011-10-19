@@ -144,7 +144,7 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 }
 ?>
 <!doctype html>
-<html lang='<?=LANG?>' manifest='internals/appcache.php'>
+<html lang='<?=LANG?>'>
 	<head>
 		<title><?=TITLE?></title>
 		<meta charset="utf-8">
@@ -158,7 +158,6 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 			}
 		?>
 		<script type="text/javascript" src="internals/js/config.js"></script>
-		<script type="text/javascript" src="internals/js/cache.js"></script>
 		<script type="text/javascript" src="internals/js/gallery.js"></script>
 		<script type="text/javascript" src="internals/js/fft.js"></script>
 		<script type="text/javascript" src="internals/js/throbber.js"></script>
