@@ -32,6 +32,10 @@ if (isset($_GET['file']) && strpos($_GET['file'],'..')===false) {
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['file']);
 	if (!file_exists($path) && file_exists("../$path"))
 		$path="../$path";
+	if (isset($_GET['optimize-only'])) {
+		optimize($path);
+		exit;	
+	}
 	if(!isset($_GET['tryExif']))
 		thumbnail($path);
 	else
@@ -128,5 +132,34 @@ function exif_thumb($path) {
 	$etag="exif_thumb".md5(ob_get_contents());
 	checkEtag($etag, true);
 	exit;
+}
+function optimize($path) {
+	$pathinfo=pathinfo($path);
+	$dir=dirname($path);
+	$basename=$pathinfo['basename'];
+	$md5=md5_file($path);
+	if (preg_match("/(.*?).jpg/i", $path)) {		
+		header('Content-type: image/jpeg');
+		$type="jpeg";
+	}
+	elseif (preg_match("/(.*?).png/i", $path))
+	{
+		header('Content-type: image/png');
+		$type="png";
+	}
+	if ($type=='jpeg')
+		$source = imagecreatefromjpeg($path);
+	elseif ($type=='png')
+		$source = imagecreatefrompng($path);
+	$etag="optimized".$md5;
+	if (!checkEtag($etag, false)) {
+		imageinterlace($source, 1); //Progressive JPEG loads faster
+		imageantialias($source, true); //Antialiasing
+		if ($type=='jpeg')
+			imagejpeg($source);
+		elseif ($type=='png')
+			imagepng($source);	
+		imagedestroy($source);
+	}
 }
 ?>

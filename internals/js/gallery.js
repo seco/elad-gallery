@@ -439,22 +439,17 @@ function switchHQ(content,element, thumb) {
 		thumb.setAttribute("data-quality", "HQ");
 		var info=document.lastChild;
 		var tools=content.lastChild;
-		throbContainer=document.createElement("div");
-		throbContainer.id="throbContainer";
-		if (!document.getElementById('throbContainer')) {
+		var link=content.children[2];
+		thumb.src=ScriptURI+"/internals/thumbnail.php?optimize-only=true&file="+element.firstChild.href;	
+		throbContainer = document.getElementById('throbContainer');
+
+		if (!throbContainer) {
+			throbContainer=document.createElement("div");
+			throbContainer.id="throbContainer";
 			content.appendChild(throbContainer);
 		}
-		else {
-			throbContainer=document.getElementById('throbContainer');		
-		}
-		if (!throbObj.throb) { 
-			throbObj=new Throbber(throbContainer);
-			throbObj.throb();
-		} else if (!throbObj.timer) {
-			throbObj.throb();
-		}
-		var link=content.children[2];
-		thumb.src=element.firstChild.href;
+		throbObj=new Throbber(throbContainer);
+		throbObj.throb();
 		var zoomIn=document.createElement('span');
 		zoomIn.className="zoom";
 		zoomIn.id="zoomIn";
