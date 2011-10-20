@@ -289,6 +289,11 @@ div#info a.big {
 	-webkit-transition-property: max-width, max-height;
 	-webkit-transition-duration: 0.5s;
 }
+div#info .HQbtn {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
 /* Image Rotation */
 div#info .rotateR, div#info .rotateL {
 	font-size: 20px;
@@ -439,7 +444,7 @@ div#info #throbContainer {
 	left: 10%;
 	position:absolute;
 	top:50%;
-	z-index:1;
+	z-index:99;
 	height: 128px;
 	width: 128px;
 }
