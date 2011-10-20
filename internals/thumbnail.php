@@ -53,8 +53,8 @@ function thumbnail($path) {
 	}
 	$thumbdir="thumbs";
 	$percent = 0.2;
-	if (isset($_GET['scale'])) {
-		switch($_GET['scale']) {
+	if (defined('THUMB_SCALE')) {
+		switch(THUMB_SCALE) {
 			case "medium":
 				$thumbdir="thumbs-med";
 				$percent=0.5;

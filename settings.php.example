@@ -6,6 +6,7 @@
 
 	/* Optional */	
 	define('USER_STYLE', 'mystyle.css'); // URL, relative path or file name for your custom style sheet. Set to false or remove this line if you don't have such stylesheet.
+	define('THUMB_SCALE', 'medium'); // low (or remove the line) for low scale, medium for medium and high for high.
 
 	/* Required */
 	return('OK'); //Tells gallery.php that the settings file is OK. Don't remove it.
