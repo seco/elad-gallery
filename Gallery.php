@@ -157,12 +157,16 @@ if (isset($_GET['exif']) && strpos($_GET['exif'],'..')===false) {
 		<?
 			}
 		?>
-		<script type="text/javascript" src="internals/js/config.js"></script>
-		<script type="text/javascript" src="internals/js/gallery.js"></script>
-		<script type="text/javascript" src="internals/js/fft.js"></script>
-		<script type="text/javascript" src="internals/js/throbber.js"></script>
-		<script type="text/javascript" src="internals/js/dirInfo.js"></script>
 		<script type="text/javascript" src="internals/js/classList.js"></script>
+		<script type="text/javascript" src="internals/js/throbber.js"></script>
+		<script type="text/javascript" src="internals/js/fft.js"></script>
+		<script type="text/javascript">
+			/* Embedded from internals/js/config.js */
+			<?=file_get_contents("internals/js/config.js")?>
+		</script>
+		<script type="text/javascript" src="internals/js/gallery.js"></script>
+		<script type="text/javascript" src="internals/js/dirInfo.js"></script>
+
 	</head>
 	<body onload="init('<?=$full_url ?>');">
 		<?
