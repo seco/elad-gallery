@@ -9,9 +9,8 @@
 	useAjax: [true|false], disables or enables AJAX for directory navigation
 	showDirInfoTooltip: [true|false], disables or enables the directory information tooltip.
 */
-
 config = {
-	useAnimations: true,
+	useAnimations: false,
 	useAjax: true,
 	showDirInfoTooltip: true
   };
