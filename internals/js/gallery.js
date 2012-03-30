@@ -56,6 +56,7 @@ function ShowInfo(element, event) {
 	var close = document.createElement("span");
 	close.className="close";
 	close.innerHTML="X";
+	close.title="close preview window";
 	closeInfo=function() {
 		function func(e) {
 			this.removeEventListener("transitionend", func, false);
@@ -75,6 +76,7 @@ function ShowInfo(element, event) {
 	var slideshow=document.createElement("span");
 	slideshow.className="slideshow";
 	slideshow.innerHTML="▣";
+	slideshow.title="slideshow";
 	slideshow.onclick=function() {
 		var oldnode=document.body.removeChild(info);
 		info=null;
@@ -144,6 +146,7 @@ function ShowInfo(element, event) {
 	};
 	var next=document.createElement("span");
 	next.className="next";
+	next.title="next picture";
 	next.innerHTML="«";
 	next.onclick=function() {
 		me++;
@@ -160,6 +163,7 @@ function ShowInfo(element, event) {
 	}
 	var prev=document.createElement("span");
 	prev.className="prev";
+	prev.title="previous picture";
 	prev.innerHTML="»";
 	prev.onclick=function() {
 		me--;
@@ -252,12 +256,13 @@ function fillContent(element, content) {
 	link.className="non"
 	var data = document.createElement("div");
 	data.className="data";
-	data.innerHTML="טוען...";
+	data.innerHTML="Loading...";
 	var tools=document.createElement("div");
 	tools.id="tools";
 	showdata= document.createElement("div");
 	showdata.innerHTML="▢";
 	showdata.className="hidedata";
+	showdata.title="hide metadata";
 	var showdataT, showdataKillT;
 	content.appendChild(showdata);
 	content.appendChild(data);
@@ -267,6 +272,7 @@ function fillContent(element, content) {
 			big=true;
 			data.className="dataHidden";
 			showdata.className="showdata";
+			showdata.title="show metadata";
 			var margin=data.offsetWidth+39;
 			//if (margin<330)
 				//margin=360;
@@ -298,6 +304,7 @@ function fillContent(element, content) {
 			data.style.removeProperty("display");
 			data.className="data";
 			showdata.className="hidedata";
+			showdata.title="hide metadata";
 			data.style.marginRight="";
 			content.classList.remove("bigger");
 		}
@@ -639,7 +646,7 @@ function slideshowNext() {
 	oldImage.style.zIndex=1;
 	newImage.style.display="none";
 	slideshowBG.appendChild(newImage);
-	info.innerHTML="טוען...";
+	info.innerHTML="Loading...";
 	imageNumSpan.innerHTML=imageID;
 	newImage.className="fadeIn";
 	var fadeEnd=function() {
@@ -726,7 +733,7 @@ function hashChangeFunc() {
 				dir=parms[1];
 				changeHash("img", "", true);
 				var container=document.getElementById('galleryContainer');
-				container.innerHTML="<span class='loading'>טוען...</span>";
+				container.innerHTML="<span class='loading'>Loading...</span>";
 				var throbContainer=document.createElement("div");
 				throbContainer.id="throbContainer";
 				container.appendChild(throbContainer);

@@ -26,7 +26,7 @@ if (!defined('SCRIPT_DIR_URL') || !defined('IS_DIR_INDEX') || !defined('TITLE'))
 //Include functions
 include("functions.php");
 
-ini_set('memory_limit', '64M');
+ini_set('memory_limit', '128M');
 
 if (isset($_GET['file']) && strpos($_GET['file'],'..')===false) {
 	$path=str_replace(SCRIPT_DIR_URL, '', $_GET['file']);
