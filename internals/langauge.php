@@ -1,5 +1,10 @@
 <?php
 //Detect preferd langauge (TODO: add a way to override browser setting)
+$localedir='internals/locale/';
+if (strpos($_SERVER['SCRIPT_NAME'], "internals")!==FALSE) {
+	$localedir='locale/';	
+}
+define('LOCALE_DIR', $localedir);
 function detect_lang() {
 	$langs = array();
 
@@ -22,7 +27,7 @@ function detect_lang() {
 	}
 	$filearray=array();
 	$i=0;
-	if ($handle = opendir('internals/locale/')) {
+	if ($handle = opendir(LOCALE_DIR)) {
 		while (false !== ($file = readdir($handle))) {
 			if (!is_dir($file) && preg_match("/(.*?).php/i", $file))
 				$filearray[$i]=$file;
@@ -36,7 +41,10 @@ function detect_lang() {
 			return $lang;
 		}
 	}
-	return "en";
+	if (isset($_GET['lc']) && in_array($_GET['lc'].".php", $filearray))
+		return $_GET['lc'];
+	else
+		return "en";
 
 }
 
@@ -44,7 +52,8 @@ define('LANG', detect_lang());
 
 //Return translated string
 function trans($what) {
-	$location = 'internals/locale/' . LANG . '.php';
+	
+	$location = LOCALE_DIR . LANG . '.php';
 	if(file_exists($location))
 	{
 		include $location;

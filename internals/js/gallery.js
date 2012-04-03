@@ -320,7 +320,7 @@ function fillContent(element, content) {
     	req = new ActiveXObject("Microsoft.XMLHTTP");
 	}
 	thumb.setAttribute("data-quality", "LQ");
-	req.open('GET', ScriptURI+'?exif='+element.firstChild.href, true);
+	req.open('GET', ScriptURI+'/internals/metadata.php?file='+element.firstChild.href, true);
 	req.onreadystatechange = function (aEvt) {
 		if (req.readyState == 4) {
 			if(req.status == 200) {
