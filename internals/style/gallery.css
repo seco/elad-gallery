@@ -389,17 +389,6 @@ div#settings span.close, div#info div.toolbox {
 	font-size: 20px;
 	cursor: pointer;
 }
-span.close {
-	-moz-transition: all 0.1s;
-	-o-transition: all 0.1s;
-	-webkit-transition: all 0.1s;
-}
-span.close:hover {
-	-moz-transition: all 0.1s;
-	-o-transition: all 0.1s;
-	-webkit-transition: all 0.1s;
-	font-size: 24px;
-}
 table {
 	display:inline;
 }
