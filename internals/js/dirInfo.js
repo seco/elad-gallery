@@ -30,7 +30,7 @@ function showDirInfo(element, event) {
 	element.addEventListener('mousemove',moveDirInfo,false);
 }
 function hideDirInfo(event) {
-	element=event.originalTarget;
+	element=event.originalTarget || event.srcElement;
 	if (!element.classList.contains('folder'))
 		element=element.parentNode;
 	var dir_info=document.querySelector("div.dir_info[data-for='"+element.id+"']");
