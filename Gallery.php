@@ -1,7 +1,7 @@
 <?php
 /*
 elad-gallery is a free, open sourced, lightweight and fast gallery that utilizes PHP, CSS3 and HTML5.
-	Copyright (C) 2010-2011  Elad Alfassa <elad@fedoraproject.org>
+	Copyright (C) 2010-2012  Elad Alfassa <elad@fedoraproject.org>
 
 	This file is part of elad-gallery.
 
