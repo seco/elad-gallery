@@ -291,10 +291,7 @@ function fillContent(element, content) {
 			data.addEventListener("transitionend", func, false);
 			data.addEventListener("webkitTransitionEnd", func, false);
 			data.addEventListener("oTransitionEnd",  func, false);
-			if (local_config.useAnimations==false)
-				func();
-			else
-				showdataKillT=setTimeout("func()", 1200);
+			showdataKillT=setTimeout("func()", 1200);
 
 		}
 		else {
